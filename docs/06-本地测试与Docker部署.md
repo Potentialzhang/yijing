@@ -69,7 +69,7 @@ npm run test:container
 
 ## 4. 增量迁移
 
-迁移版本保存在 PostgreSQL 的 `schema_migrations` 表。每次新增版本只需在 `scripts/migrate.mjs` 与 `server/db.ts` 追加一个版本；迁移在事务中执行，重复启动幂等。当前全新数据库会执行 v1～v3，建立账户、会话、统一记录写模型及正式业务表。项目按要求不迁移旧浏览器数据。
+迁移版本保存在 PostgreSQL 的 `schema_migrations` 表。每次新增版本只需在 `scripts/migrate.mjs` 与 `server/db.ts` 追加一个版本；迁移在事务中执行，重复启动幂等。当前全新数据库会执行 v1～v4，建立账户、会话、统一记录写模型、正式业务表和管理员状态。项目按要求不迁移旧浏览器数据。
 
 ## 5. 数据与安全边界
 

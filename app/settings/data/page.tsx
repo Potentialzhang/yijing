@@ -11,7 +11,7 @@ export default function DataSettingsPage() {
         <p className="eyebrow">设置 · 数据安全</p>
         <h1>你的学习数据，由你保管。</h1>
         <p className="subpage-lead">
-          易境的笔记、作答和学习进度默认只保存在当前浏览器。导出备份后，可以在需要时恢复。
+          易境的笔记、作答和学习进度统一保存在 PostgreSQL 账户数据库，可跨设备访问；导出备份后，也可以在需要时恢复。
         </p>
       </header>
       <div className="settings-links">
@@ -30,7 +30,7 @@ export default function DataSettingsPage() {
         <span className="content-label">当前版本说明</span>
         <h2>账户数据库，跨设备同步</h2>
         <p>
-          当前版本不要求登录，也不会把笔记发送到服务器。未来如果增加跨设备同步，会先提供冲突预览、备份和关闭同步选项。
+          当前账户的学习数据已由 PostgreSQL 统一管理。JSON 备份是用户主动下载的副本，不会绕过账户权限或自动上传到第三方。
         </p>
       </section>
     </main>

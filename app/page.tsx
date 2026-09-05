@@ -8,6 +8,7 @@ import { TodayTasks } from "@/components/dashboard/TodayTasks";
 import { TodayLabel } from "@/components/dashboard/TodayLabel";
 import { LessonStatus } from "@/components/learning/LessonStatus";
 import { ResponsiveMenu, type ResponsiveMenuItem } from "@/components/navigation/ResponsiveMenu";
+import { ProfileChip } from "@/components/account/ProfileChip";
 
 const navItems = [{ href: "#today", label: "今日" }, { href: "/learn", label: "学习地图" }, { href: "/lab/hexagram", label: "卦象实验室" }, { href: "/hexagrams", label: "六十四卦" }, { href: "/review", label: "复习" }, { href: "/notes", label: "笔记" }, { href: "/tools", label: "工具" }, { href: "/settings/data", label: "设置" }] as const satisfies readonly ResponsiveMenuItem[];
 
@@ -20,7 +21,7 @@ export default function Home() {
         <div className="sidebar-note"><span>今日箴言</span><p>先观其象，再问其理。</p></div><div className="sidebar-footer">账户同步 · 个人学习空间</div>
       </aside>
       <main className="main-content">
-        <header className="topbar"><div><span className="breadcrumb">我的学习空间 / 今日</span><h1>把看过的，变成会用的。</h1></div><div className="profile-chip"><span className="profile-avatar">易</span><span>学习者</span><span className="chevron">⌄</span></div></header>
+        <header className="topbar"><div><span className="breadcrumb">我的学习空间 / 今日</span><h1>把看过的，变成会用的。</h1></div><ProfileChip /></header>
         <section className="hero-grid" id="today">
           <div className="hero-card"><TodayLabel /><h2>从一条爻开始，<br /><em>重新认识变化。</em></h2><p>今天用 10 分钟复习八卦结构，再在实验室里亲手改变一个爻。</p><div className="hero-actions"><a className="primary-button" href="#lab">开始今日练习 <span>↗</span></a><Link className="outline-button" href="/self-test">快速自测</Link></div><div className="hero-orbit orbit-one">☰</div><div className="hero-orbit orbit-two">☵</div><div className="hero-orbit orbit-three">☷</div></div>
           <TodayStats />

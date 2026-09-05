@@ -40,6 +40,10 @@ export async function migrateDatabase(): Promise<void> {
           CREATE TABLE IF NOT EXISTS compass_corrections (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
           CREATE TABLE IF NOT EXISTS content_errata (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, target_type text NOT NULL, target_id text NOT NULL, payload jsonb NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now());
           CREATE TABLE IF NOT EXISTS ai_generations (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE, task_kind text NOT NULL, input_scopes jsonb NOT NULL, source_ids jsonb NOT NULL, output_text text NOT NULL, created_at timestamptz NOT NULL DEFAULT now());`,
+      4: `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin boolean NOT NULL DEFAULT false;
+          ALTER TABLE users ADD COLUMN IF NOT EXISTS is_disabled boolean NOT NULL DEFAULT false;
+          CREATE INDEX IF NOT EXISTS users_admin_idx ON users(is_admin, is_disabled);
+          UPDATE users SET is_admin = true WHERE id = (SELECT id FROM users ORDER BY created_at, id LIMIT 1) AND NOT EXISTS (SELECT 1 FROM users WHERE is_admin = true);`,
     };
     const applied = await client.query<{ version: number }>("SELECT version FROM schema_migrations");
     const done = new Set(applied.rows.map(row => row.version));

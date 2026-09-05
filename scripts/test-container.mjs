@@ -92,7 +92,10 @@ async function runAccountDataCheck() {
   const cookie = cookieValues.map((value) => value.split(";", 1)[0]).filter(Boolean).join("; ");
   if (!cookie) throw new Error("账户注册验收未返回会话 Cookie");
   const me = await fetch(`${baseUrl}/api/auth/me`, { headers: { Cookie: cookie } });
-  if (me.status !== 200 || !(await me.json()).user?.email) throw new Error("账户会话验收失败");
+  const meData = await me.json();
+  if (me.status !== 200 || !meData.user?.email || meData.user.is_admin !== true) throw new Error("账户会话或首位管理员验收失败");
+  const adminUsers = await fetch(`${baseUrl}/api/admin/users`, { headers: { Cookie: cookie } });
+  if (adminUsers.status !== 200 || !(await adminUsers.json()).users?.some((item) => item.id === meData.user.id && item.isAdmin === true)) throw new Error("管理员用户列表验收失败");
   const record = { id: `container-note-${process.pid}`, targetType: "concept", targetId: "yin-yang-lines", title: "容器验收", markdown: "PostgreSQL OK", tags: [], sourceRefs: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
   const write = await fetch(`${baseUrl}/api/data`, {
     method: "PUT",
