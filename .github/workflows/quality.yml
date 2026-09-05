@@ -1,0 +1,181 @@
+name: quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Static checks and production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Run lint
+        run: npm run lint
+      - name: Run typecheck
+        run: npm run typecheck
+      - name: Run unit tests
+        run: npm test -- --run
+      - name: Run content structure and handoff gate
+        run: npm run verify:content
+      - name: Run data reliability gate
+        run: npm run verify:data
+      - name: Build production bundle
+        run: npm run build
+      - name: Upload build metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-metadata
+          path: |
+            .next/BUILD_ID
+            .next/routes-manifest.json
+          if-no-files-found: ignore
+
+  browser:
+    name: Production E2E (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, webkit, firefox]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps ${{ matrix.project }}
+      - name: Build production bundle
+        run: npm run build
+      - name: Run production E2E
+        run: |
+          if [ "${{ matrix.project }}" = "firefox" ]; then
+            npm run test:e2e:prod:firefox
+          else
+            npm run test:e2e:prod:${{ matrix.project }}
+          fi
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+
+  mobile:
+    name: Touch-device simulation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Build production bundle
+        run: npm run build
+      - name: Run touch-device simulation against production
+        run: npm run test:mobile:prod
+
+  ux:
+    name: Accessibility, responsive and performance checks
+    runs-on: ubuntu-latest
+    needs: static
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Run accessibility checks
+        run: npm run test:a11y
+      - name: Run responsive checks
+        run: npm run test:responsive
+      - name: Run performance checks
+        run: npm run test:perf
+      - name: Upload UX Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-ux
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+
+  smoke:
+    name: Production smoke test
+    runs-on: ubuntu-latest
+    needs: static
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build production bundle
+        run: npm run build
+      - name: Run smoke test
+        run: npm run test:smoke
+
+  container:
+    name: Container build and smoke test
+    runs-on: ubuntu-latest
+    needs: static
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build and smoke-test standalone container
+        env:
+          CONTAINER_IMAGE: yijing-app:ci
+          CONTAINER_NAME: yijing-app-ci
+        run: npm run test:container

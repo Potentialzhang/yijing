@@ -1,0 +1,24 @@
+name: yijing
+
+services:
+  yijing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${YIJING_IMAGE:-yijing-app:local}
+    container_name: ${YIJING_CONTAINER:-yijing-app}
+    restart: unless-stopped
+    init: true
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      AI_ALLOWED_ORIGIN: ${AI_ALLOWED_ORIGIN:-}
+    ports:
+      - "${YIJING_BIND:-0.0.0.0}:${YIJING_PORT:-3000}:3000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m

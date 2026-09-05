@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">易境</title>
+  <desc id="desc">深青圆盘与暖橙阴阳圆点，外圈为三组阴阳爻线</desc>
+  <rect width="512" height="512" rx="112" fill="#f7f4ef"/>
+  <circle cx="256" cy="256" r="188" fill="#19454a"/>
+  <circle cx="256" cy="256" r="142" fill="#b75e42"/>
+  <circle cx="256" cy="256" r="62" fill="#f7f4ef"/>
+  <circle cx="256" cy="256" r="22" fill="#19454a"/>
+  <g fill="none" stroke="#f7f4ef" stroke-linecap="round" stroke-width="18">
+    <path d="M256 82v48M224 90v40M288 90v40"/>
+    <path d="M108 338h52M108 370h52M108 402h52"/>
+    <path d="M352 338h52M352 370h52M352 402h52"/>
+  </g>
+  <g stroke="#19454a" stroke-linecap="round" stroke-width="14">
+    <path d="M222 256h22M268 256h22"/>
+  </g>
+</svg>
