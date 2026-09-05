@@ -148,18 +148,21 @@ describe("数据库访问边界", () => {
     expect(statSync(join(process.cwd(), "db/repository.ts")).isFile()).toBe(true);
   });
 
-  it("数据库启动归一化覆盖收藏与推演快照", () => {
+  it("服务端数据库迁移覆盖个人业务表", () => {
     const repository = readFileSync(join(process.cwd(), "db/repository.ts"), "utf8");
-    expect(repository).toContain("favorites: yijingDb.favorites as unknown as MigrationTable");
-    expect(repository).toContain("labSnapshots: yijingDb.labSnapshots as unknown as MigrationTable");
+    const migration = readFileSync(join(process.cwd(), "scripts/migrate.mjs"), "utf8");
+    expect(repository).not.toContain("indexedDB");
+    expect(migration).toContain("schema_migrations");
+    expect(migration).toContain("CREATE TABLE IF NOT EXISTS favorites");
+    expect(migration).toContain("CREATE TABLE IF NOT EXISTS lab_snapshots");
   });
 
-  it("数据库启动归一化在单一写事务内执行", () => {
+  it("客户端启动不打开浏览器数据库", () => {
     const repository = readFileSync(join(process.cwd(), "db/repository.ts"), "utf8");
-    const normalizeStart = repository.indexOf("export async function openAndNormalizeDatabase");
-    const normalizeBody = repository.slice(normalizeStart, repository.indexOf("/**", normalizeStart + 1));
-    expect(normalizeBody).toContain('yijingDb.transaction(\n    "rw"');
-    expect(normalizeBody).toContain("() => normalizeCurrentRecords({");
+    const schema = readFileSync(join(process.cwd(), "db/schema.ts"), "utf8");
+    expect(repository).not.toContain("indexedDB");
+    expect(schema).not.toContain("Dexie");
+    expect(schema).toContain("/api/data");
   });
 
   it("统一备份入口会先归一化旧版勘误记录", () => {
@@ -259,7 +262,8 @@ describe("数据库访问边界", () => {
     const events = readFileSync(join(process.cwd(), "db/events.ts"), "utf8");
     expect(events).toContain("tryPostDataChanged");
     expect(events).toContain("dataChannel = null");
-    expect(events).toContain("storage-event fallback");
+    expect(events).not.toContain("localStorage");
+    expect(events).toContain("BroadcastChannel");
   });
 
   it("六十四卦索引从单一只读事务读取收藏与学习状态", () => {
@@ -599,7 +603,7 @@ describe("数据库访问边界", () => {
     expect(backup).toContain("const busy = importing || exporting || clearing");
     expect(backup).toContain("if (busy) return;");
     expect(backup).toContain("disabled={busy}");
-    expect(backup).toContain("{clearing ? \"正在清空…\" : \"清空本地数据\"}");
+    expect(backup).toContain("{clearing ? \"正在清空…\" : \"清空账户数据\"}");
   });
 
   it("首页勘误汇总读取失败时不会静默显示为空记录", () => {
@@ -784,24 +788,18 @@ describe("数据库访问边界", () => {
     expect(script).toContain("let containerStarted = false");
     expect(script).toContain("containerStarted = true");
     expect(script).toContain("if (containerStarted)");
-    expect(script).toContain("process.env.CONTAINER_BUILD_TIMEOUT_MS ?? 900_000");
-    expect(script).toContain("positiveNumber(buildTimeoutMs, 900_000)");
-    expect(script).toContain("const commandTimeout = options.timeout ?? normalizedBuildTimeout");
-    expect(script).toContain("timeout: commandTimeout");
-    expect(script).toContain("超过 ${commandTimeout}ms 执行预算");
-    expect(script).toContain("process.env.CONTAINER_CLEANUP_TIMEOUT_MS ?? 10_000");
-    expect(script).toContain("timeout: cleanupTimeoutMs");
-    expect(script).toContain("DOCKER_BUILDKIT");
-    expect(script).toContain('process.env.CONTAINER_BUILDKIT !== "0"');
-    expect(script).toContain('docker", ["buildx", "version"]');
-    expect(script).toContain("回退到 legacy builder");
-    expect(script).toContain('skipBuild ? "skipped" : resolveBuildBackend()');
-    expect(script).toContain("configuredHostPort === undefined");
+    expect(script).toContain('docker", args');
+    expect(script).toContain('compose(["build"]');
+    expect(script).toContain('compose(["up", "-d"]');
+    expect(script).toContain('compose(["down", "--volumes", "--remove-orphans"]');
+    expect(script).toContain("appContainerId()");
+    expect(script).toContain("inspectHealth()");
+    expect(script).toContain("runAccountDataCheck()");
+    expect(script).toContain('/api/auth/register');
+    expect(script).toContain('/api/data?table=notes');
     expect(script).toContain("await findFreePort()");
     expect(script).toContain("process.env.CONTAINER_PORT");
-    expect(script).toContain('process.once("SIGINT"');
-    expect(script).toContain('process.once("SIGTERM"');
-    expect(script).toContain("handleTermination");
+    expect(script).toContain("PostgreSQL + 易境应用");
   });
 
   it("内部部署与本地测试入口保持可重复运行契约", () => {
@@ -815,13 +813,12 @@ describe("数据库访问边界", () => {
 
     expect(packageJson.scripts?.deploy).toBe("node scripts/deploy.mjs");
     expect(packageJson.scripts?.["local:test"]).toBe("node scripts/local-test.mjs");
-    expect(deploy).toContain('"--restart",\n    "unless-stopped"');
+    expect(deploy).toContain('runCompose(["up", "-d"');
     expect(deploy).toContain("async function waitForHealthy()");
     expect(deploy).toContain('"healthy"');
-    expect(deploy).toContain('runDocker(["rm", "--force", container]');
-    expect(deploy).toContain('"no-new-privileges:true"');
-    expect(deploy).toContain('"--cap-drop",\n    "ALL"');
-    expect(deploy).not.toContain('"--rm"');
+    expect(deploy).toContain("PostgreSQL + 易境 Compose 服务");
+    expect(deploy).toContain("YIJING_DB_CONTAINER");
+    expect(deploy).toContain("DEPLOY_SKIP_BUILD");
     expect(localTest).toContain("npm, [\"run\", \"dev\"");
     expect(localTest).toContain("/api/health");
     expect(localTest).toContain("LOCAL_TEST_PORT");
@@ -829,10 +826,10 @@ describe("数据库访问边界", () => {
     expect(compose).toContain("restart: unless-stopped");
     expect(compose).toContain("YIJING_BIND");
     expect(compose).toContain("YIJING_PORT");
-    expect(docs).toContain("npm run local:test");
+    expect(docs).toContain("npm run test:container");
     expect(docs).toContain("npm run deploy");
     expect(docs).toContain("docker compose up -d --build");
-    expect(docs).toContain("内部自用模式");
+    expect(docs).toContain("账户模式");
   });
 
   it("快速自测保存在异步完成后尊重组件挂载状态", () => {

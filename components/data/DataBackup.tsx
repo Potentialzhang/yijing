@@ -13,10 +13,6 @@ import {
   type ImportSummary,
   type BackupData,
 } from "@/core/data/backup";
-import {
-  MIGRATION_WARNING_KEY,
-  parseMigrationWarning,
-} from "@/core/data/migration-warning";
 import { buildBackupAgeReminder } from "@/core/data/backup-reminder";
 import { buildClearDataStatus } from "@/core/data/clear-status";
 import { buildExportCompletionStatus } from "@/core/data/export-status";
@@ -71,16 +67,6 @@ const IMPORT_TABLE_LABELS: Record<keyof BackupData, string> = {
   compassCorrections: "罗盘修正",
 };
 
-function readMigrationWarning() {
-  try {
-    return parseMigrationWarning(
-      window.localStorage.getItem(MIGRATION_WARNING_KEY),
-    );
-  } catch {
-    return null;
-  }
-}
-
 export function DataBackup() {
   const [status, setStatus] = useState("建议定期导出一份备份。");
   const [backupReminder, setBackupReminder] = useState("");
@@ -105,20 +91,17 @@ export function DataBackup() {
     setMetadataLoading(true);
     setMetadataError(false);
     void Promise.resolve().then(async () => {
-      const warning = readMigrationWarning();
       const { recoveryAvailable: available, lastExportAt } = await readBackupMetadataSnapshot();
       if (sequence !== metadataSequence.current) return;
       setRecoveryAvailable(available);
-      setBackupReminder(warning
-        ? `数据库已从 v${warning.fromVersion} 升级到 v${warning.toVersion}，建议现在导出一份备份`
-        : buildBackupAgeReminder(lastExportAt ?? ""));
+      setBackupReminder(buildBackupAgeReminder(lastExportAt ?? ""));
       setMetadataLoading(false);
       setMetadataError(false);
     }).catch(() => {
       if (sequence !== metadataSequence.current) return;
       setMetadataLoading(false);
       setMetadataError(true);
-      setBackupReminder("备份提醒暂时无法读取，请检查浏览器存储权限后重试。");
+      setBackupReminder("备份提醒暂时无法读取，请确认网络可用后重试。");
     });
   }, []);
 
@@ -160,7 +143,7 @@ export function DataBackup() {
       setStatus("已读取当前数据范围，请确认后导出。应用内置内容不会重复导出。");
     } catch (error) {
       if (mountedRef.current) setStatus(
-          `读取导出范围失败：${error instanceof Error ? error.message : "本地数据无法读取"}`,
+          `读取导出范围失败：${error instanceof Error ? error.message : "账户数据无法读取"}`,
         );
     } finally {
       if (mountedRef.current) setExporting(false);
@@ -194,18 +177,13 @@ export function DataBackup() {
         // visible while explaining that only the reminder metadata failed.
         metadataSaved = false;
       }
-      try {
-        window.localStorage.removeItem(MIGRATION_WARNING_KEY);
-      } catch {
-        /* localStorage is optional; the IndexedDB export already succeeded */
-      }
       if (!mountedRef.current) return;
       if (metadataSaved) setBackupReminder("");
       setExportPreview(null);
       setStatus(buildExportCompletionStatus(data.notes.length, data.reviewAttempts.length, metadataSaved));
     } catch (error) {
       if (mountedRef.current) setStatus(
-          `导出失败：${error instanceof Error ? error.message : "本地数据无法读取"}`,
+          `导出失败：${error instanceof Error ? error.message : "账户数据无法读取"}`,
         );
     } finally {
       if (mountedRef.current) setExporting(false);
@@ -300,7 +278,7 @@ export function DataBackup() {
       notifyDataChanged();
       setStatus("已撤销最近一次导入，数据恢复到导入前状态。");
     } catch (error) {
-      if (mountedRef.current) setStatus(`撤销导入失败：${error instanceof Error ? error.message : "本地数据无法恢复"}`);
+      if (mountedRef.current) setStatus(`撤销导入失败：${error instanceof Error ? error.message : "账户数据无法恢复"}`);
     } finally {
       if (mountedRef.current) setImporting(false);
     }
@@ -311,12 +289,12 @@ export function DataBackup() {
     setClearing(true);
     try {
       const { notes, reviewAttempts: attempts, reviewCardStates: states, conceptProgress: progress, favorites, preferences, labSnapshots, errata, compassRecords, compassCorrections } = await countUserData();
-      const hadSourceTemplate = hasStoredSourceTemplate();
+      const hadSourceTemplate = await hasStoredSourceTemplate();
       const sourceTemplateSummary = hadSourceTemplate ? "、1 个来源模板" : "";
-      const summary = `将删除：${notes} 条笔记、${attempts} 条作答、${states} 张复习卡、${progress} 条学习进度、${favorites} 个收藏、${preferences} 项偏好、${labSnapshots} 个推演快照、${errata} 条内容勘误、${compassRecords} 条坐向记录、${compassCorrections} 条罗盘修正历史${sourceTemplateSummary}。\n请输入“清空易境”确认删除本浏览器中的学习数据：`;
+      const summary = `将删除：${notes} 条笔记、${attempts} 条作答、${states} 张复习卡、${progress} 条学习进度、${favorites} 个收藏、${preferences} 项偏好、${labSnapshots} 个推演快照、${errata} 条内容勘误、${compassRecords} 条坐向记录、${compassCorrections} 条罗盘修正历史${sourceTemplateSummary}。\n请输入“清空易境”确认删除账户学习数据：`;
       if (window.prompt(summary) !== "清空易境") return;
       await clearUserData();
-      const sourceTemplateCleared = clearStoredSourceTemplate();
+      const sourceTemplateCleared = await clearStoredSourceTemplate();
       notifyDataChanged();
       if (!mountedRef.current) return;
       setRecoveryAvailable(false);
@@ -370,7 +348,7 @@ export function DataBackup() {
           onClick={() => void clearData()}
           disabled={busy}
         >
-          {clearing ? "正在清空…" : "清空本地数据"}
+          {clearing ? "正在清空…" : "清空账户数据"}
         </button>
         {recoveryAvailable && (
           <button
@@ -387,7 +365,7 @@ export function DataBackup() {
         <div className="export-preview" role="region" aria-labelledby="export-preview-title">
           <strong id="export-preview-title">导出范围预览</strong>
           <span>
-            将导出当前浏览器中的用户数据；不会导出经典正文、来源模板、传感器读数、平台诊断或账户信息。来源模板仅保留在当前浏览器，清空本地数据时会一并移除。
+            将导出当前账户中的用户数据；不会导出经典正文、传感器读数、平台诊断或账户信息。来源模板属于账户数据，清空账户数据时会一并移除。
           </span>
           <div className="export-summary-grid">
             <span>笔记 {exportPreview.summary.notes} 条</span>
@@ -478,7 +456,7 @@ export function DataBackup() {
         </div>
       )}
       <small>
-        导入采用合并写入，不会静默删除当前记录；成功后会保留最近一次导入前的本地恢复快照，可在本页撤销；恢复快照不进入导出文件。导出文件可能包含你的私人笔记，请自行妥善保管。
+        导入采用合并写入，不会静默删除当前记录；成功后会保留最近一次导入前的账户恢复快照，可在本页撤销；恢复快照不进入导出文件。导出文件可能包含你的私人笔记，请自行妥善保管。
       </small>
     </section>
   );

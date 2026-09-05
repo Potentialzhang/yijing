@@ -1,41 +1,78 @@
 import {
   parseSourceTemplate,
+  serializeSourceTemplate,
   SOURCE_TEMPLATE_CHANGED_EVENT,
-  SOURCE_TEMPLATE_STORAGE_KEY,
   type SourceTemplate,
 } from "@/core/notes/source-template";
+import type { UserSourceRef } from "@/db/schema";
+import { notifyDataChanged } from "@/db/events";
 
-/** Read the user's copyable source template from browser storage. */
-export function readStoredSourceTemplate(): SourceTemplate | null {
-  if (typeof window === "undefined") return null;
+/**
+ * The source template is a personal record, so it is persisted in PostgreSQL
+ * through the same account-scoped API as notes and preferences.  This module
+ * keeps the editor API small while deliberately avoiding browser storage.
+ */
+const TABLE = "sourceTemplates";
+const KEY = "latest";
+
+function announceChange(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(SOURCE_TEMPLATE_CHANGED_EVENT));
+  notifyDataChanged();
+}
+
+export async function readStoredSourceTemplate(): Promise<SourceTemplate | null> {
   try {
-    return parseSourceTemplate(window.localStorage.getItem(SOURCE_TEMPLATE_STORAGE_KEY));
+    const response = await fetch(`/api/data?table=${TABLE}`, { cache: "no-store" });
+    if (!response.ok) return null;
+    const body = await response.json() as { records?: unknown[] };
+    const record = body.records?.[0];
+    if (!record || typeof record !== "object" || Array.isArray(record)) return null;
+    const template = (record as { template?: unknown }).template ?? record;
+    return parseSourceTemplate(JSON.stringify(template));
   } catch {
     return null;
   }
 }
 
-export function hasStoredSourceTemplate(): boolean {
-  if (typeof window === "undefined") return false;
+export async function hasStoredSourceTemplate(): Promise<boolean> {
+  return Boolean(await readStoredSourceTemplate());
+}
+
+export async function saveStoredSourceTemplate(
+  sourceRef: UserSourceRef,
+  copiedAt: string,
+): Promise<boolean> {
   try {
-    return window.localStorage.getItem(SOURCE_TEMPLATE_STORAGE_KEY) !== null;
+    const template = JSON.parse(serializeSourceTemplate(sourceRef, copiedAt)) as SourceTemplate;
+    const response = await fetch("/api/data", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        table: TABLE,
+        key: KEY,
+        record: { id: KEY, template, updatedAt: new Date().toISOString() },
+      }),
+    });
+    if (!response.ok) return false;
+    announceChange();
+    return true;
   } catch {
     return false;
   }
 }
 
-export function clearStoredSourceTemplate(): boolean {
-  if (typeof window === "undefined") return true;
+export async function clearStoredSourceTemplate(): Promise<boolean> {
   try {
-    window.localStorage.removeItem(SOURCE_TEMPLATE_STORAGE_KEY);
+    const response = await fetch("/api/data", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ table: TABLE, id: KEY }),
+    });
+    if (!response.ok) return false;
+    announceChange();
+    return true;
   } catch {
     return false;
   }
-  try {
-    window.dispatchEvent(new Event(SOURCE_TEMPLATE_CHANGED_EVENT));
-  } catch {
-    // A notification failure must not turn a successful storage removal into
-    // a false failure; mounted editors will re-read on their next refresh.
-  }
-  return true;
 }

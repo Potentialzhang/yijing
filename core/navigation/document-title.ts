@@ -8,6 +8,7 @@ const EXACT_TITLES: Record<string, string> = {
   "/review/session": "复习会话",
   "/notes": "个人笔记",
   "/notes/draft": "AI 辅学笔记",
+  "/account": "账户与同步",
   "/stats": "学习统计",
   "/self-test": "快速自测",
   "/tools": "工具集合",

@@ -1,110 +1,79 @@
 # 本地测试与 Docker 部署
 
-本项目是本地优先的浏览器应用：学习记录保存在使用者浏览器的 IndexedDB 中，Docker 容器只负责提供 Next.js 页面，不需要挂载数据库卷。
+易境采用“Next.js 应用 + PostgreSQL 数据库”的账户模式。所有个人学习数据（笔记、收藏、复习、进度、偏好、来源模板、推演和罗盘记录）都经服务端 API 写入 PostgreSQL；浏览器不创建业务数据库，也不保存个人学习数据。公开内容可静态浏览，保存数据前需要先登录。
 
-本项目按内部自用模式部署，不设置公开发布所需的版权/来源签字门槛；已有来源字段仅用于个人学习时追踪资料，不影响内部启动。六十四卦/三百八十四爻正文仍应按学习需要逐条核对，不能把“内部使用”理解为内容准确性自动通过。
+## 1. Docker Compose 一键运行（推荐）
 
-## 1. 本地开发测试环境
-
-首次安装依赖：
+要求本机安装并启动 Docker Desktop、Colima 或 Docker Engine。首次运行先准备环境文件：
 
 ```bash
-npm install
-npx playwright install chromium webkit
+cp .env.example .env
+# 至少修改 POSTGRES_PASSWORD；启用 AI 时再填写 OPENAI_API_KEY/OPENAI_MODEL。
+docker compose up -d --build
+docker compose ps
 ```
 
-启动可交互的本地测试环境：
+Compose 会按顺序完成：启动 PostgreSQL → 等待健康检查 → 执行 `scripts/migrate.mjs` 增量迁移 → 启动 Next.js。默认监听 `0.0.0.0:3000`，本机访问 `http://127.0.0.1:3000`，手机访问 `http://电脑局域网IP:3000`。登录入口为 `/account`。
 
-```bash
-npm run local:test
-```
-
-默认地址为 `http://127.0.0.1:3000`。命令会启动 Next.js 开发服务、等待 `/api/health` 就绪并持续运行；按 `Ctrl-C` 停止。
-
-可通过环境变量修改地址：
-
-```bash
-LOCAL_TEST_HOST=127.0.0.1 LOCAL_TEST_PORT=3100 npm run local:test
-```
-
-另开终端执行测试：
-
-```bash
-npm test -- --run       # 单元测试
-npm run lint            # 静态检查
-npm run typecheck       # 类型检查
-npm run test:e2e        # Chromium/WebKit 开发态 E2E
-npm run test:a11y       # 无障碍
-npm run test:responsive # 响应式
-npm run test:perf       # 性能
-```
-
-需要验证生产构建时使用：
-
-```bash
-npm run verify:release
-```
-
-## 2. Docker 一键部署
-
-要求本机已安装并启动 Docker Desktop 或 Docker Engine。最简单的部署命令：
+也可以使用部署脚本（同样会同时启动数据库）：
 
 ```bash
 npm run deploy
 ```
 
-脚本会构建 `yijing-app:local` 镜像，替换同名旧容器，启动非 root 容器并等待健康检查通过。默认监听 `0.0.0.0:3000`，浏览器访问：
-
-```text
-http://127.0.0.1:3000
-```
-
 常用配置：
 
 ```bash
-# 改端口，仅本机访问
+# 只允许本机访问并改端口
 YIJING_PORT=8080 YIJING_BIND=127.0.0.1 npm run deploy
 
-# 使用已有镜像，不重复构建
-DEPLOY_SKIP_BUILD=1 YIJING_IMAGE=yijing-app:local npm run deploy
+# 已有镜像时跳过构建
+DEPLOY_SKIP_BUILD=1 npm run deploy
 
-# 查看日志与停止服务
-docker logs -f yijing-app
-docker rm --force yijing-app
-```
-
-也可以使用 Compose：
-
-```bash
-cp .env.example .env
-docker compose up -d --build
-docker compose ps
+# 查看日志、停止服务（数据卷默认保留）
 docker compose logs -f yijing
-```
-
-停止 Compose 服务：
-
-```bash
 docker compose down
 ```
 
-## 3. 镜像打包
+局域网 HTTP 测试保持 `AUTH_COOKIE_SECURE=0`；使用 HTTPS 反向代理时设置 `APP_ORIGIN=https://你的域名` 和 `AUTH_COOKIE_SECURE=1`。
 
-手工构建和运行：
+## 2. 镜像构建说明
 
 ```bash
 docker build --tag yijing-app:local .
-docker run --detach --name yijing-app --restart unless-stopped --publish 3000:3000 yijing-app:local
 ```
 
-镜像使用 Next.js standalone 多阶段构建，运行时以 UID 1001 的非 root 用户启动，并包含 `/api/health` Docker `HEALTHCHECK`。浏览器学习数据不在容器内，因此升级镜像不会删除已有浏览器数据；升级前仍建议从“数据设置”导出 JSON 备份。
+`Dockerfile` 使用 Next.js standalone 多阶段构建，运行时以 UID 1001 非 root 用户启动，并在启动命令中先执行数据库迁移。不要单独用 `docker run yijing-app:local` 启动正式服务，因为该方式没有 PostgreSQL；应使用 Compose，让应用和数据库共享内部网络。
 
-## 4. 容器验收
+## 3. 本地开发
 
-需要同时验证镜像构建、非 root 用户、健康状态和 30 个生产路由：
+若只修改公开内容页面，可以运行：
 
 ```bash
+npm install
+npm run dev -- --hostname 0.0.0.0 --port 3000
+```
+
+要测试登录和个人数据，请先启动 Compose，再让开发服务连接数据库（数据库默认不暴露宿主机端口，推荐直接使用 Compose 应用服务）。完整应用验收使用：
+
+```bash
+npm test -- --run
+npm run typecheck
+npm run lint
+npm run build
+npm run test:smoke
 npm run test:container
 ```
 
-该命令会使用临时端口，验收结束后自动清理测试容器；它不会清理 `npm run deploy` 启动的正式容器。
+`npm run test:container` 会使用隔离 Compose 项目和临时端口，构建镜像、启动 PostgreSQL、执行迁移、等待健康检查，并验证生产路由、注册会话和账户数据读写；结束后自动清理测试容器和测试数据卷，不影响正式 Compose 服务。
+
+## 4. 增量迁移
+
+迁移版本保存在 PostgreSQL 的 `schema_migrations` 表。每次新增版本只需在 `scripts/migrate.mjs` 与 `server/db.ts` 追加一个版本；迁移在事务中执行，重复启动幂等。当前全新数据库会执行 v1～v3，建立账户、会话、统一记录写模型及正式业务表。项目按要求不迁移旧浏览器数据。
+
+## 5. 数据与安全边界
+
+- 会话使用 HttpOnly、SameSite=Lax Cookie；生产 HTTPS 环境开启 Secure Cookie。
+- `/api/data` 所有查询按当前会话的 `user_id` 隔离，未登录返回 401，写入/删除要求同源请求。
+- PostgreSQL 仅加入 Compose 内部网络，不映射宿主机 5432；数据通过 `yijing-postgres` 卷持久化。
+- JSON 备份是用户主动下载的文件，不进入数据库迁移流程；账户删除和公网部署前仍应补充限流、CSRF token、密码重置、HTTPS 与审计策略。

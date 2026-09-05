@@ -8,6 +8,7 @@ import { DatabaseGate } from "@/components/system/DatabaseGate";
 import { InstallPrompt } from "@/components/system/InstallPrompt";
 import { RouteDocumentTitle } from "@/components/navigation/RouteDocumentTitle";
 import { validateSeedContent } from "@/core/content/validate";
+import { AccountGate } from "@/components/system/AccountGate";
 
 // Keep the content contract enforced at the application boundary as well as
 // in the unit suite. This runs during server/build evaluation and prevents a
@@ -22,5 +23,5 @@ export const metadata: Metadata = { title: "易境 · 个人易学学习工具",
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="zh-CN" data-scroll-behavior="smooth"><body><OfflineStatus /><DatabaseGate><PreferenceHydrator /><ServiceWorkerRegistration /><InstallPrompt /><RouteDocumentTitle /><AppNavigation />{children}</DatabaseGate></body></html>;
+  return <html lang="zh-CN" data-scroll-behavior="smooth"><body><OfflineStatus /><DatabaseGate><PreferenceHydrator /><ServiceWorkerRegistration /><InstallPrompt /><RouteDocumentTitle /><AppNavigation /><AccountGate>{children}</AccountGate></DatabaseGate></body></html>;
 }

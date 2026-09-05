@@ -1,6 +1,21 @@
 name: yijing
 
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: ${YIJING_DB_CONTAINER:-yijing-db}
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-yijing}
+      POSTGRES_USER: ${POSTGRES_USER:-yijing}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-in-env}
+    volumes:
+      - yijing-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
   yijing:
     build:
       context: .
@@ -8,11 +23,17 @@ services:
     image: ${YIJING_IMAGE:-yijing-app:local}
     container_name: ${YIJING_CONTAINER:-yijing-app}
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     init: true
     environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://yijing:change-me-in-env@db:5432/yijing}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      APP_ORIGIN: ${APP_ORIGIN:-}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-0}
       AI_ALLOWED_ORIGIN: ${AI_ALLOWED_ORIGIN:-}
     ports:
       - "${YIJING_BIND:-0.0.0.0}:${YIJING_PORT:-3000}:3000"
@@ -22,3 +43,6 @@ services:
       - ALL
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=64m
+
+volumes:
+  yijing-postgres:

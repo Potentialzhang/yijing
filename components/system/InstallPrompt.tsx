@@ -9,8 +9,6 @@ interface BeforeInstallPromptEventLike extends Event {
   userChoice: Promise<{ outcome: InstallOutcome; platform: string }>;
 }
 
-const DISMISS_KEY = "yijing-install-prompt-dismissed";
-
 function isIosDevice(): boolean {
   if (typeof navigator === "undefined") return false;
   return /iPad|iPhone|iPod/i.test(navigator.userAgent) ||
@@ -33,14 +31,9 @@ export function InstallPrompt() {
   // them out of the first rendered tree so hydration remains deterministic.
   const [ios] = useState(isIosDevice);
   const [installed, setInstalled] = useState(false);
-  const [dismissed, setDismissed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return window.sessionStorage.getItem(DISMISS_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
+  // Dismissal is intentionally ephemeral UI state. User data and settings
+  // belong to PostgreSQL, so this component does not write browser storage.
+  const [dismissed, setDismissed] = useState(false);
   const [ready, setReady] = useState(false);
   const [working, setWorking] = useState(false);
   const mountedRef = useRef(false);
@@ -97,11 +90,6 @@ export function InstallPrompt() {
 
   function dismiss() {
     setDismissed(true);
-    try {
-      window.sessionStorage.setItem(DISMISS_KEY, "1");
-    } catch {
-      /* sessionStorage is optional. */
-    }
   }
 
   return (

@@ -14,6 +14,7 @@ const items = [
   { href: "/notes", label: "笔记" },
   { href: "/tools", label: "工具" },
   { href: "/settings/data", label: "设置" },
+  { href: "/account", label: "账户" },
 ] as const satisfies readonly ResponsiveMenuItem[];
 
 /** Shared navigation for every route except the home page, which has its own desktop shell. */

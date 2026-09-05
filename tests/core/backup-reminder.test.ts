@@ -27,7 +27,7 @@ describe("备份提醒边界", () => {
   });
 
   it("清空数据时只在确有来源模板时展示模板结果", () => {
-    expect(buildClearDataStatus(false, true)).toBe("已清空本地学习数据。建议重新导入备份或从一个知识点开始。");
+    expect(buildClearDataStatus(false, true)).toBe("已清空账户学习数据。建议重新导入备份或从一个知识点开始。");
     expect(buildClearDataStatus(true, true)).toContain("含来源模板");
     expect(buildClearDataStatus(true, false)).toContain("来源模板未能移除");
   });

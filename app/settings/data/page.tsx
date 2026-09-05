@@ -28,7 +28,7 @@ export default function DataSettingsPage() {
       <DataBackup />
       <section className="pending-content backup-explainer">
         <span className="content-label">当前版本说明</span>
-        <h2>本地优先，云同步待后续版本</h2>
+        <h2>账户数据库，跨设备同步</h2>
         <p>
           当前版本不要求登录，也不会把笔记发送到服务器。未来如果增加跨设备同步，会先提供冲突预览、备份和关闭同步选项。
         </p>

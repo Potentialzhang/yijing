@@ -32,7 +32,7 @@ export function Preferences() {
   const mountedRef = useRef(false);
   const initialSettled = useRef(false);
   // Keep rapid changes in the same order the user made them. This matters
-  // when two controls are changed before the first IndexedDB write resolves.
+  // when two controls are changed before the first database write resolves.
   const preferenceWriteQueue = useRef(createSerialTaskQueue());
 
   const refresh = useCallback(() => {
@@ -41,7 +41,7 @@ export function Preferences() {
       .then((snapshot) => {
         if (sequence !== refreshSequence.current) return;
         setLoading(false);
-        // A user can change a control before the first IndexedDB read settles.
+        // A user can change a control before the first database read settles.
         // Do not let that older read overwrite the visible choice; subsequent
         // cross-tab notifications still refresh the form from persisted data.
         if (!initialSettled.current && userChanged.current) {

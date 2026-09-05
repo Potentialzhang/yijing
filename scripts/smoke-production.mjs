@@ -75,6 +75,7 @@ const routes = [
   { path: "/settings/data", status: 200 },
   { path: "/settings/preferences", status: 200 },
   { path: "/settings/ai", status: 200 },
+  { path: "/account", status: 200 },
   { path: "/manifest.webmanifest", status: 200 },
   { path: "/sw.js", status: 200 },
   { path: "/icon.svg", status: 200, contentType: "image/svg+xml" },
@@ -183,7 +184,7 @@ async function assertRoutes(deadline) {
     healthData.service !== "易境" ||
     healthData.appVersion !== "0.1.0" ||
     healthData.serviceWorkerCache !== "yijing-static-v61" ||
-    healthData.storage !== "local-only"
+    healthData.storage !== "postgresql"
   ) {
     throw new Error("/api/health 返回的部署状态摘要不完整或版本不匹配");
   }

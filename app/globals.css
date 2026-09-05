@@ -376,7 +376,7 @@ a {
   font-size: 12px;
   font-weight: 700;
   /* Keep disabled-state opacity out of the hover transition. Otherwise the
-     button can be captured mid-fade while IndexedDB-backed records finish
+     button can be captured mid-fade while database-backed records finish
      loading, producing a transient low-contrast surface for accessibility
      scanners and keyboard users. */
   transition: background-color 0.2s ease, transform 0.2s ease;

@@ -17,7 +17,7 @@ export default function Home() {
       <aside className="sidebar">
         <Link href="#today" className="brand" aria-label="易境首页"><span className="brand-mark">☷</span><span><strong>易境</strong><small>学习你的易学地图</small></span></Link>
         <ResponsiveMenu items={navItems} activeHref="#today" className="main-nav" ariaLabel="主导航" showDots />
-        <div className="sidebar-note"><span>今日箴言</span><p>先观其象，再问其理。</p></div><div className="sidebar-footer">本地优先 · 个人学习空间</div>
+        <div className="sidebar-note"><span>今日箴言</span><p>先观其象，再问其理。</p></div><div className="sidebar-footer">账户同步 · 个人学习空间</div>
       </aside>
       <main className="main-content">
         <header className="topbar"><div><span className="breadcrumb">我的学习空间 / 今日</span><h1>把看过的，变成会用的。</h1></div><div className="profile-chip"><span className="profile-avatar">易</span><span>学习者</span><span className="chevron">⌄</span></div></header>

@@ -17,7 +17,7 @@ const projectArg = projectIndex === -1
   : process.argv[projectIndex] === "--project"
     ? process.argv[projectIndex + 1]
     : process.argv[projectIndex].slice("--project=".length);
-// WebKit's macOS process model can slow a long, IndexedDB-heavy suite under
+// WebKit's macOS process model can slow a long, database-heavy suite under
 // workstation load. Give that suite a larger overall budget while keeping
 // the per-test timeout and controlled retries unchanged; Firefox keeps the
 // shorter default so a browser startup regression is reported promptly.

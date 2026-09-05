@@ -15,11 +15,12 @@ import { createSerialTaskQueue } from "@/core/async/serial-task-queue";
 import { areSourceRefsEqual, replaceSourceRefAtPreservingRest } from "@/core/notes/records";
 import { shouldApplySourceRefresh } from "@/core/notes/source-sync";
 import {
-  serializeSourceTemplate,
   SOURCE_TEMPLATE_CHANGED_EVENT,
-  SOURCE_TEMPLATE_STORAGE_KEY,
 } from "@/core/notes/source-template";
-import { readStoredSourceTemplate } from "@/core/browser/source-template-storage";
+import {
+  readStoredSourceTemplate,
+  saveStoredSourceTemplate,
+} from "@/core/browser/source-template-storage";
 
 type SourceSnapshot = {
   source: string;
@@ -214,12 +215,13 @@ export function SourceRefEditor({
     setAdditionalStatus("");
   }
 
-  function refreshSourceTemplateAvailability(): void {
+  async function refreshSourceTemplateAvailability(): Promise<void> {
     if (!mountedRef.current) return;
-    setHasSourceTemplate(Boolean(readStoredSourceTemplate()));
+    const template = await readStoredSourceTemplate();
+    if (mountedRef.current) setHasSourceTemplate(template !== null);
   }
 
-  function copyCurrentSource(): void {
+  async function copyCurrentSource(): Promise<void> {
     if (loading || readError) return;
     const snapshot = currentSnapshot();
     const sourceRef = snapshotToSourceRef(snapshot);
@@ -228,19 +230,18 @@ export function SourceRefEditor({
       return;
     }
     try {
-      const serialized = serializeSourceTemplate(sourceRef, new Date().toISOString());
-      window.localStorage.setItem(SOURCE_TEMPLATE_STORAGE_KEY, serialized);
-      window.dispatchEvent(new Event(SOURCE_TEMPLATE_CHANGED_EVENT));
+      const saved = await saveStoredSourceTemplate(sourceRef, new Date().toISOString());
+      if (!saved) throw new Error("保存失败");
       setHasSourceTemplate(true);
       setTemplateStatus("已复制当前来源，可在其他笔记粘贴填写。");
     } catch {
-      setTemplateStatus("来源模板复制失败，请检查浏览器存储权限后重试。");
+      setTemplateStatus("来源模板复制失败，请确认已登录且网络可用后重试。");
     }
   }
 
   async function pasteSourceTemplate(): Promise<void> {
     if (loading || readError) return;
-    const template = readStoredSourceTemplate();
+    const template = await readStoredSourceTemplate();
     if (!template) {
       setHasSourceTemplate(false);
       setTemplateStatus("没有可用的来源模板，请先在另一条笔记中复制来源。");
@@ -325,7 +326,7 @@ export function SourceRefEditor({
     try {
       await operation;
     } catch {
-      if (mountedRef.current) setSourceStatus("来源保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setSourceStatus("来源保存失败，请确认已登录且网络可用后重试");
     }
     return didSave;
   }
@@ -390,7 +391,7 @@ export function SourceRefEditor({
     try {
       await operation;
     } catch {
-      if (mountedRef.current) setAdditionalStatus("新增来源保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setAdditionalStatus("新增来源保存失败，请确认已登录且网络可用后重试");
     }
   }
 
@@ -442,7 +443,7 @@ export function SourceRefEditor({
     try {
       await operation;
     } catch {
-      if (mountedRef.current) setSourceStatus("来源移除失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setSourceStatus("来源移除失败，请确认已登录且网络可用后重试");
     }
   }
 
@@ -485,7 +486,7 @@ export function SourceRefEditor({
             )
           ) {
             // A notification can race the visibility of our own committed
-            // IndexedDB transaction. Never let that stale read roll back the
+            // Server-side transaction. Never let that stale read roll back the
             // locally acknowledged source list or selected editor fields.
             return;
           }
@@ -506,7 +507,7 @@ export function SourceRefEditor({
           if (!active || sequence !== refreshSequence.current) return;
           setLoading(false);
           setReadError(true);
-          setSourceStatus("来源读取失败，请检查浏览器存储权限后重试");
+          setSourceStatus("来源读取失败，请确认网络可用后重试");
         });
     };
     const scheduleRefresh = () => {
@@ -546,17 +547,14 @@ export function SourceRefEditor({
   }, [noteId, retryVersion]);
 
   useEffect(() => {
-    const initialRead = window.setTimeout(refreshSourceTemplateAvailability, 0);
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === SOURCE_TEMPLATE_STORAGE_KEY) refreshSourceTemplateAvailability();
-    };
+    const initialRead = window.setTimeout(() => void refreshSourceTemplateAvailability(), 0);
     const handleTemplateChange = () => refreshSourceTemplateAvailability();
-    window.addEventListener("storage", handleStorage);
     window.addEventListener(SOURCE_TEMPLATE_CHANGED_EVENT, handleTemplateChange);
+    window.addEventListener(DATA_CHANGED_EVENT, handleTemplateChange);
     return () => {
       window.clearTimeout(initialRead);
-      window.removeEventListener("storage", handleStorage);
       window.removeEventListener(SOURCE_TEMPLATE_CHANGED_EVENT, handleTemplateChange);
+      window.removeEventListener(DATA_CHANGED_EVENT, handleTemplateChange);
     };
   }, []);
 

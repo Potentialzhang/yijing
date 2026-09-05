@@ -41,6 +41,7 @@ const CORE_ROUTES = [
   "/settings/preferences",
   "/settings/ai",
   "/settings",
+  "/account",
   "/manifest.webmanifest",
   "/icon.svg",
   "/icon-192.png",

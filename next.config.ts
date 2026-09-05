@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
-          // User notes and content previews are local-only; do not allow
+          // User data is account-scoped; do not allow
           // browsers to reinterpret downloaded responses as another type.
           { key: "X-Content-Type-Options", value: "nosniff" },
           // The app has no supported embedding use case, so prevent clickjacking.

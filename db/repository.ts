@@ -1,5 +1,4 @@
 import { DATABASE_VERSION, yijingDb } from "@/db/schema";
-import { normalizeCurrentRecords, type MigrationTable } from "@/db/migrations";
 import { compareIsoTimestamps } from "@/core/date/local";
 import { isValidResponseTimeMs } from "@/core/review/response-time";
 import { normalizeCompassRecordForWrite } from "@/core/compass/records";
@@ -82,7 +81,7 @@ function preferenceValue<K extends PreferenceKey>(
   return (isValidPreferenceValue(key, value) ? value : DEFAULT_PREFERENCES[key]) as PreferenceSnapshot[K];
 }
 
-/** Read every user preference from one IndexedDB snapshot. */
+/** Read every user preference from one server-side snapshot. */
 export function readPreferenceSnapshot(): Promise<PreferenceSnapshot> {
   return yijingDb.transaction("r", yijingDb.preferences, async () => {
     const records = await yijingDb.preferences.bulkGet([...preferenceKeys]);
@@ -132,60 +131,18 @@ export async function setPreferencesAtomically(
 }
 
 export async function getExistingDatabaseVersion(): Promise<number | undefined> {
-  if (typeof indexedDB === "undefined" || typeof indexedDB.databases !== "function") return undefined;
-  // Safari/iOS and some embedded WebViews expose `databases()` but may never
-  // settle the promise on a fresh LAN origin. This is only an advisory
-  // migration notice, so fail open quickly; Dexie.open() remains authoritative.
-  const databases = await Promise.race([
-    indexedDB.databases(),
-    new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("database inventory timeout")), 1500)),
-  ]).catch(() => [] as IDBDatabaseInfo[]);
-  return databases.find((database) => database.name === "yijing-local")?.version;
+  return undefined;
 }
 
 export async function openAndNormalizeDatabase(): Promise<void> {
-  await yijingDb.open();
-  // Startup repair reads and writes every user table. Keep the whole pass in
-  // one transaction so a second tab cannot write a newer record between the
-  // repair's read and its normalized put.
-  // Do not hold the entire application behind the repair pass. Mobile
-  // Safari/WebViews can keep a long multi-store transaction pending while the
-  // page is already usable. Dexie serializes this transaction with later
-  // writes; migrations themselves have already run during `open()`.
-  void yijingDb.transaction(
-    "rw",
-    [
-      yijingDb.notes,
-      yijingDb.reviewAttempts,
-      yijingDb.reviewCardStates,
-      yijingDb.conceptProgress,
-      yijingDb.favorites,
-      yijingDb.labSnapshots,
-      yijingDb.preferences,
-      yijingDb.errata,
-      yijingDb.compassRecords,
-      yijingDb.compassCorrections,
-    ],
-    () => normalizeCurrentRecords({
-      notes: yijingDb.notes as unknown as MigrationTable,
-      reviewAttempts: yijingDb.reviewAttempts as unknown as MigrationTable,
-      reviewCardStates: yijingDb.reviewCardStates as unknown as MigrationTable,
-      conceptProgress: yijingDb.conceptProgress as unknown as MigrationTable,
-      favorites: yijingDb.favorites as unknown as MigrationTable,
-      labSnapshots: yijingDb.labSnapshots as unknown as MigrationTable,
-      preferences: yijingDb.preferences as unknown as MigrationTable,
-      errata: yijingDb.errata as unknown as MigrationTable,
-      compassRecords: yijingDb.compassRecords as unknown as MigrationTable,
-      compassCorrections: yijingDb.compassCorrections as unknown as MigrationTable,
-    }),
-  ).catch(() => undefined);
+  return;
 }
 
 /**
  * Application-facing persistence boundary.
  *
- * UI components should use these domain operations instead of importing the
- * Dexie instance or reaching into a table. Keeping transactions here makes
+ * UI components should use these domain operations instead of reaching into a
+ * remote table. Keeping transactions here makes
  * concurrency and migration changes local to the database layer.
  */
 
@@ -315,7 +272,7 @@ export interface KnowledgeBaseSnapshot {
 
 /**
  * Read the two collections rendered by the personal knowledge-base page from
- * one IndexedDB snapshot. Independent reads can otherwise straddle a write
+ * one server-side snapshot. Independent reads can otherwise straddle a write
  * from another tab and briefly show a note without its matching favorite (or
  * vice versa).
  */
@@ -342,7 +299,7 @@ export interface ReviewQueueSnapshot {
 }
 
 /**
- * Read queue limits and card states from one IndexedDB snapshot. Queue
+ * Read queue limits and card states from one server-side snapshot. Queue
  * construction must not combine a newly saved preference with an older set
  * of card states (or the reverse) when another tab changes data.
  */

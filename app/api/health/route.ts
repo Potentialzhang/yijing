@@ -12,7 +12,7 @@ export function GET() {
       service: "易境",
       appVersion: APP_VERSION,
       serviceWorkerCache: SERVICE_WORKER_CACHE,
-      storage: "local-only",
+      storage: "postgresql",
     },
     {
       headers: {

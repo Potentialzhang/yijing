@@ -47,7 +47,7 @@ export function AIAssistSettings() {
   const enabledRef = useRef(false);
   const scopesRef = useRef<AiScopeId[]>([]);
   const purposeRef = useRef<AiPreviewPurpose>("study-draft");
-  // Rapid control changes can otherwise complete out of order in IndexedDB.
+  // Rapid control changes can otherwise complete out of order in the database.
   // Serializing the atomic writes keeps persisted consent aligned with the UI.
   const preferenceWriteQueue = useRef(createSerialTaskQueue());
   const demoDraft = useMemo(() => {
