@@ -88,6 +88,7 @@ describe("移动端布局边界", () => {
     expect(detail).toContain('className="detail-hero hexagram-reading-left"');
     expect(detail).toContain('className="hexagram-classic-sections"');
     expect(detail.indexOf('className="detail-hero hexagram-reading-left"')).toBeLessThan(detail.indexOf('className="hexagram-classic-sections"'));
+    expect(detail.indexOf("上卦 <small>四爻至上爻")).toBeLessThan(detail.indexOf("下卦 <small>初爻至三爻"));
     expect(detail).not.toContain('<div className="structure-table">{hexagram.lines.map');
     expect(detail).toContain('className="plain-translation-label">白话解读');
     expect(detail).toContain('className="context-note-shortcut line-notes"');

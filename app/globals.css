@@ -1581,19 +1581,24 @@ a {
   gap: 8px;
   margin-top: 25px;
 }
-.structure-table div {
+.structure-table > div {
   display: grid;
   gap: 5px;
   padding: 11px;
   border: 1px solid var(--line);
   border-radius: 8px;
 }
-.structure-table span,
-.structure-table small {
+.structure-table > div > span,
+.structure-table > div > small {
   color: var(--muted);
   font-size: 10px;
 }
-.structure-table strong {
+.structure-table > div > span small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.structure-table > div > strong {
   font-size: 13px;
   font-weight: 500;
 }
@@ -7989,7 +7994,7 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     gap: 6px;
     margin-top: 14px;
   }
-  .hexagram-detail-page .structure-table div {
+  .hexagram-detail-page .structure-table > div {
     padding: 8px;
   }
   .hexagram-detail-page .hexagram-study-sections {
@@ -8087,6 +8092,18 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 }
 .hexagram-reading-card .detail-visual {
   min-height: 250px;
+}
+.hexagram-reading-card .hexagram-trigram-table {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 16px;
+}
+.hexagram-reading-card .hexagram-trigram-table .trigram-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
 }
 .hexagram-classic-sections {
   display: grid;
