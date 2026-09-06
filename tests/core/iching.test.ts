@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HEXAGRAMS, getHexagramByLines, getHexagramByPair, getHexagramByNumber, getHexagramNaturePair } from "@/core/iching/hexagrams";
+import { HEXAGRAMS, getHexagramByLines, getHexagramByPair, getHexagramByNumber, getHexagramNaturePair, getHexagramTrigramPositionLabel } from "@/core/iching/hexagrams";
 import { TRIGRAMS, trigramFromLines } from "@/core/iching/trigrams";
 import { nuclearLines, oppositeLines, relationHexagrams, reversedLines, toggleLines } from "@/core/iching/transforms";
 import { normalizeLabSnapshotForWrite } from "@/core/iching/snapshots";
@@ -39,6 +39,18 @@ describe("六十四卦身份", () => {
       if (hexagram.lowerTrigramId !== hexagram.upperTrigramId) {
         expect(hexagram.name.startsWith(getHexagramNaturePair(hexagram))).toBe(true);
       }
+    }
+  });
+
+  it("卡片的上下卦说明按上卦在前、下卦在后展示", () => {
+    expect(getHexagramTrigramPositionLabel(getHexagramByNumber(3))).toBe("坎上 · 震下");
+    expect(getHexagramTrigramPositionLabel(getHexagramByNumber(4))).toBe("艮上 · 坎下");
+    expect(getHexagramTrigramPositionLabel(getHexagramByNumber(40))).toBe("震上 · 坎下");
+    expect(getHexagramTrigramPositionLabel(getHexagramByNumber(63))).toBe("坎上 · 离下");
+    for (const hexagram of HEXAGRAMS) {
+      const label = getHexagramTrigramPositionLabel(hexagram);
+      expect(label).toContain("上 · ");
+      expect(label.endsWith("下")).toBe(true);
     }
   });
 });

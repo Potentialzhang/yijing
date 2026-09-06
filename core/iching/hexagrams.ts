@@ -75,6 +75,13 @@ export function getHexagramNaturePair(hexagram: HexagramIdentity): string {
   return `${upper.nature}${lower.nature}`;
 }
 
+/** 卡片上的上下卦说明同样按视觉位置从上到下阅读。 */
+export function getHexagramTrigramPositionLabel(hexagram: HexagramIdentity): string {
+  const upper = getTrigram(hexagram.upperTrigramId);
+  const lower = getTrigram(hexagram.lowerTrigramId);
+  return `${upper.name}上 · ${lower.name}下`;
+}
+
 export function assertHexagramDataset(): void {
   if (HEXAGRAMS.length !== 64) throw new Error("六十四卦数据数量错误");
   const signatures = new Set(HEXAGRAMS.map((hexagram) => hexagram.signature));
