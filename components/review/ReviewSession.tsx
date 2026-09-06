@@ -30,6 +30,7 @@ import {
   TrigramSignatureVisual,
   isTrigramSignature,
 } from "@/components/hexagram/TrigramSignatureVisual";
+import { ExerciseDisplayValue } from "@/components/learning/ExerciseDisplayValue";
 import type { LineValue } from "@/core/iching";
 import {
   captureLocalNow,
@@ -72,8 +73,7 @@ function ReviewDisplay({ card }: { card: (typeof cards)[number] }) {
     return (
       <TrigramGlyph lines={trigram.lines} label={`${trigram.name}三爻结构`} />
     );
-  if (isTrigramSignature(card.display)) return <TrigramSignatureVisual value={card.display} />;
-  return <>{card.display}</>;
+  return <ExerciseDisplayValue value={card.display} />;
 }
 
 export function ReviewSession() {

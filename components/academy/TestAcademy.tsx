@@ -6,6 +6,7 @@ import { EXERCISES, type Exercise, type ExerciseKind } from "@/content/exercises
 import { HEXAGRAMS, type LineValue } from "@/core/iching";
 import { HexagramGlyph } from "@/components/hexagram/HexagramGlyph";
 import { TrigramSignatureVisual, isTrigramSignature } from "@/components/hexagram/TrigramSignatureVisual";
+import { ExerciseDisplayValue } from "@/components/learning/ExerciseDisplayValue";
 import { captureLocalNow } from "@/core/date/local";
 import { isExerciseAnswerCorrect, normalizeExerciseAnswer } from "@/core/review/answer";
 import { saveReviewResult, syncConceptProgress } from "@/db/repository";
@@ -57,12 +58,7 @@ function exerciseKindsFor(modeId: string): readonly ExerciseKind[] {
 function QuestionDisplay({ exercise }: { exercise: Exercise }) {
   const hexagram = exercise.targetType === "hexagram" ? HEXAGRAMS.find((item) => item.id === exercise.targetId) : undefined;
   if (hexagram && ["hexagram-pair", "hexagram-guess"].includes(exercise.kind)) return <HexagramGlyph lines={hexagram.lines} label={`${hexagram.name}六爻卦象`} />;
-  if (isTrigramSignature(exercise.display)) return <TrigramSignatureVisual value={exercise.display} />;
-  if (exercise.display.startsWith("line-position:")) {
-    const activePosition = Number(exercise.display.split(":")[1]);
-    return <div className="line-position-visual" aria-label={`高亮第 ${activePosition} 爻`}>{[6, 5, 4, 3, 2, 1].map((position) => <span className={position === activePosition ? "is-active" : ""} key={position}><i /><small>{position === activePosition ? "◀" : ""}</small></span>)}</div>;
-  }
-  return <span>{exercise.display}</span>;
+  return <ExerciseDisplayValue value={exercise.display} />;
 }
 
 function AnswerValue({ value }: { value: string }) {

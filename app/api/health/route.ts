@@ -1,5 +1,5 @@
 const APP_VERSION = "0.1.0";
-const SERVICE_WORKER_CACHE = "yijing-static-v67";
+const SERVICE_WORKER_CACHE = "yijing-static-v68";
 
 // A deployment probe must reflect the running server rather than a cached
 // response. It intentionally contains no user data or learning conclusions.

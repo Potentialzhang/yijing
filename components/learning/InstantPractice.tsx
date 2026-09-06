@@ -17,6 +17,7 @@ import {
   TrigramSignatureVisual,
   isTrigramSignature,
 } from "@/components/hexagram/TrigramSignatureVisual";
+import { ExerciseDisplayValue } from "@/components/learning/ExerciseDisplayValue";
 
 function nowMs() {
   return Date.now();
@@ -263,11 +264,7 @@ export function InstantPractice({
       </div>
       <p className="instant-prompt">{exercise.prompt}</p>
       <div className="instant-display">
-        {isTrigramSignature(exercise.display) ? (
-          <TrigramSignatureVisual value={exercise.display} />
-        ) : (
-          exercise.display
-        )}
+        <ExerciseDisplayValue value={exercise.display} />
       </div>
       {isArrangeLines ? (
         <div className="line-arrangement" aria-label="三爻排列">
