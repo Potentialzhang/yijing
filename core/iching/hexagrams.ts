@@ -65,6 +65,16 @@ export function getHexagramByLines(lines: HexagramLines): HexagramIdentity {
   return hexagram;
 }
 
+/**
+ * 六十四卦的通行别称按“上卦之象在前、下卦之象在后”书写。
+ * 数据内部仍按 [下卦, 上卦] 保存，避免把展示顺序误当成爻序。
+ */
+export function getHexagramNaturePair(hexagram: HexagramIdentity): string {
+  const upper = getTrigram(hexagram.upperTrigramId);
+  const lower = getTrigram(hexagram.lowerTrigramId);
+  return `${upper.nature}${lower.nature}`;
+}
+
 export function assertHexagramDataset(): void {
   if (HEXAGRAMS.length !== 64) throw new Error("六十四卦数据数量错误");
   const signatures = new Set(HEXAGRAMS.map((hexagram) => hexagram.signature));

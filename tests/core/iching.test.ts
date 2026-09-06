@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HEXAGRAMS, getHexagramByLines, getHexagramByPair, getHexagramByNumber } from "@/core/iching/hexagrams";
+import { HEXAGRAMS, getHexagramByLines, getHexagramByPair, getHexagramByNumber, getHexagramNaturePair } from "@/core/iching/hexagrams";
 import { TRIGRAMS, trigramFromLines } from "@/core/iching/trigrams";
 import { nuclearLines, oppositeLines, relationHexagrams, reversedLines, toggleLines } from "@/core/iching/transforms";
 import { normalizeLabSnapshotForWrite } from "@/core/iching/snapshots";
@@ -28,6 +28,18 @@ describe("六十四卦身份", () => {
     expect(getHexagramByPair("li", "kan").kingWenNumber).toBe(63);
     expect(getHexagramByPair("kan", "li").kingWenNumber).toBe(64);
     expect(getHexagramByNumber(29).name).toBe("坎为水");
+  });
+
+  it("通行卦名按上卦在前、下卦在后展示", () => {
+    expect(getHexagramNaturePair(getHexagramByNumber(3))).toBe("水雷");
+    expect(getHexagramNaturePair(getHexagramByNumber(4))).toBe("山水");
+    expect(getHexagramNaturePair(getHexagramByNumber(40))).toBe("雷水");
+    expect(getHexagramNaturePair(getHexagramByNumber(63))).toBe("水火");
+    for (const hexagram of HEXAGRAMS) {
+      if (hexagram.lowerTrigramId !== hexagram.upperTrigramId) {
+        expect(hexagram.name.startsWith(getHexagramNaturePair(hexagram))).toBe(true);
+      }
+    }
   });
 });
 

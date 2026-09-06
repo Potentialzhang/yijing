@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { HEXAGRAMS, getTrigram } from "@/core/iching";
+import { HEXAGRAMS, getHexagramNaturePair, getTrigram } from "@/core/iching";
 import { HexagramGlyph } from "@/components/hexagram/HexagramGlyph";
 import { getHexagramStudy } from "@/content/hexagram-study";
 import { readHexagramIndexSnapshot } from "@/db/repository";
@@ -13,7 +13,7 @@ const HexagramIndexCard = memo(function HexagramIndexCard({ hexagram, favorite, 
   const upper = getTrigram(hexagram.upperTrigramId);
   const study = getHexagramStudy(hexagram);
   return <Link href={`/hexagrams/${hexagram.kingWenNumber}`} className="hexagram-index-card">
-    <div className="hex-index-top"><span className="hex-number">第 {hexagram.kingWenNumber} 卦</span><span className="hex-index-nature">{lower.nature}{upper.nature}</span></div>
+    <div className="hex-index-top"><span className="hex-number">第 {hexagram.kingWenNumber} 卦</span><span className="hex-index-nature">{getHexagramNaturePair(hexagram)}</span></div>
     <div className="hex-index-visual"><HexagramGlyph lines={hexagram.lines} label={`${study.shortName}六爻卦象`} /></div>
     <div className="hex-index-copy"><strong>{study.shortName}</strong><small>{lower.name}下 · {upper.name}上</small><small className="index-status">{favorite ? "★ 已收藏" : studied ? "已学习" : "未开始"}</small></div>
   </Link>;
