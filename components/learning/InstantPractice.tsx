@@ -13,6 +13,10 @@ import {
 } from "@/core/review/answer";
 import { MAX_RESPONSE_TIME_MS } from "@/core/review/response-time";
 import type { LineValue } from "@/core/iching";
+import {
+  TrigramSignatureVisual,
+  isTrigramSignature,
+} from "@/components/hexagram/TrigramSignatureVisual";
 
 function nowMs() {
   return Date.now();
@@ -114,7 +118,7 @@ export function InstantPractice({
         <strong className="instant-score">
           {correctCount} <small>/ {exercises.length} 正确</small>
         </strong>
-        <p>这次作答已单独记录为即时练习，间隔复习会在本地队列中继续安排。</p>
+        <p>这次作答已单独记录到账户数据库，间隔复习会继续安排。</p>
         <div className="instant-actions">
           <Link className="primary-button" href="/">
             回到今日 <span>↗</span>
@@ -173,8 +177,8 @@ export function InstantPractice({
       if (!mountedRef.current) return false;
       setError(
         error instanceof InvalidReviewStateError
-          ? "这张卡的复习状态已损坏，尚未写入本地；请先到数据设置导出或恢复备份，再重试。"
-          : "这次作答还没有写入本地，请重试保存。",
+          ? "这张卡的复习状态已损坏，尚未写入账户数据库；请先到数据设置导出或恢复备份，再重试。"
+          : "这次作答还没有写入账户数据库，请重试保存。",
       );
       return false;
     } finally {
@@ -258,7 +262,13 @@ export function InstantPractice({
         <span style={{ width: `${progressPercent}%` }} />
       </div>
       <p className="instant-prompt">{exercise.prompt}</p>
-      <div className="instant-display">{exercise.display}</div>
+      <div className="instant-display">
+        {isTrigramSignature(exercise.display) ? (
+          <TrigramSignatureVisual value={exercise.display} />
+        ) : (
+          exercise.display
+        )}
+      </div>
       {isArrangeLines ? (
         <div className="line-arrangement" aria-label="三爻排列">
           <div className="line-draft" aria-live="polite">
@@ -348,7 +358,11 @@ export function InstantPractice({
               onClick={() => void choose(option)}
               disabled={selected !== null || saving}
             >
-              {option}
+              {isTrigramSignature(option) ? (
+                <TrigramSignatureVisual value={option} />
+              ) : (
+                option
+              )}
             </button>
           ))}
         </div>
@@ -360,7 +374,13 @@ export function InstantPractice({
           aria-live="polite"
         >
           <strong>
-            {isCorrect ? "回答正确" : `答案是：${exercise.answer}`}
+            {isCorrect ? (
+              "回答正确"
+            ) : (
+              <>
+                答案是：<TrigramSignatureVisual value={exercise.answer} />
+              </>
+            )}
           </strong>
           <span>{exercise.explanation}</span>
         </div>

@@ -7568,3 +7568,45 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   .hexagram-index-card { min-height: 185px; padding: 10px; }
   .hex-index-visual { min-height: 86px; }
 }
+
+/* Learner-facing trigram choices use the actual yin/yang lines. The bit
+   signatures remain internal answer values only. */
+.trigram-signature-visual {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+.trigram-signature-visual .trigram-glyph {
+  width: 82px;
+  gap: 4px;
+}
+.trigram-signature-visual .line-glyph {
+  width: 74px;
+  min-height: 8px;
+}
+.trigram-signature-visual .line-part {
+  height: 6px;
+}
+.trigram-signature-visual .line-gap {
+  width: 9px;
+  flex-basis: 9px;
+}
+.answer-options .trigram-signature-visual,
+.instant-choices .trigram-signature-visual {
+  min-height: 48px;
+}
+.instant-display .trigram-signature-visual .trigram-glyph {
+  width: 118px;
+  gap: 7px;
+}
+.instant-display .trigram-signature-visual .line-glyph {
+  width: 108px;
+}
+.instant-display .trigram-signature-visual .line-part {
+  height: 8px;
+}
+.answer-feedback strong .trigram-signature-visual,
+.instant-feedback strong .trigram-signature-visual {
+  margin-inline: 4px;
+}

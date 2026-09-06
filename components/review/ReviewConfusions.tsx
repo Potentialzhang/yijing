@@ -107,30 +107,30 @@ export function ReviewConfusions() {
 
   if (loading) {
     return (
-      <section className="review-confusions" aria-label="本地错题模式">
-        <StudyDataLoading label="正在整理本地错题模式…" />
+      <section className="review-confusions" aria-label="账户错题模式">
+        <StudyDataLoading label="正在整理账户错题模式…" />
       </section>
     );
   }
   if (loadError) {
     return (
-      <section className="review-confusions" aria-label="本地错题模式">
+      <section className="review-confusions" aria-label="账户错题模式">
         <StudyDataError onRetry={refresh} />
       </section>
     );
   }
 
   return (
-    <section className="review-confusions" aria-label="本地错题模式">
+    <section className="review-confusions" aria-label="账户错题模式">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">本地错题模式</p>
+          <p className="eyebrow">账户错题模式</p>
           <h2>找到最容易混淆的卡片</h2>
         </div>
         <span className="weak-count">{items.length} 条</span>
       </div>
       <p className="review-confusions-intro">
-        只按本地作答历史统计错误和遗忘，并保留当时的题干与答案快照；不做性格判断、不联网，也不会修改原笔记。
+        只按账户数据库中的作答历史统计错误和遗忘，并保留当时的题干与答案快照；不做性格判断、不联网，也不会修改原笔记。
       </p>
       {items.length === 0 ? (
         <p className="review-confusions-empty">完成一次答错或标记“忘记”的题目后，这里会出现可回看的混淆点。</p>

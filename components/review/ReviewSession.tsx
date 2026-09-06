@@ -26,6 +26,10 @@ import { NoteEntry } from "@/components/notes/NoteEntry";
 // <NoteEditor targetType="session" targetId={sessionId} />
 import { TRIGRAMS } from "@/core/iching";
 import { TrigramGlyph } from "@/components/hexagram/TrigramGlyph";
+import {
+  TrigramSignatureVisual,
+  isTrigramSignature,
+} from "@/components/hexagram/TrigramSignatureVisual";
 import type { LineValue } from "@/core/iching";
 import {
   captureLocalNow,
@@ -254,8 +258,8 @@ export function ReviewSession() {
         error instanceof UnsupportedReviewAlgorithmError
           ? "这张卡使用了当前不支持的复习算法版本，请先导出数据并完成版本迁移后再继续。"
           : error instanceof InvalidReviewStateError
-            ? "这张卡的复习状态已损坏，尚未写入本地；请先到数据设置导出或恢复备份，再重试。"
-          : "这次复习还没有写入本地，请重试保存。",
+            ? "这张卡的复习状态已损坏，尚未写入账户数据库；请先到数据设置导出或恢复备份，再重试。"
+          : "这次复习还没有写入账户数据库，请重试保存。",
       );
     } finally {
       if (mountedRef.current) setSaving(false);
@@ -536,7 +540,11 @@ export function ReviewSession() {
                 onClick={() => choose(option)}
                 disabled={selected !== null}
               >
-                {option}
+                {isTrigramSignature(option) ? (
+                  <TrigramSignatureVisual value={option} />
+                ) : (
+                  option
+                )}
               </button>
             ))}
           </div>
@@ -547,7 +555,15 @@ export function ReviewSession() {
             role="status"
             aria-live="polite"
           >
-            <strong>{correct ? "答案正确" : `答案是：${card.answer}`}</strong>
+            <strong>
+              {correct ? (
+                "答案正确"
+              ) : (
+                <>
+                  答案是：<TrigramSignatureVisual value={card.answer} />
+                </>
+              )}
+            </strong>
             <span>
               {correct
                 ? card.explanation
