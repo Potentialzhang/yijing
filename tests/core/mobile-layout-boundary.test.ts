@@ -85,11 +85,15 @@ describe("移动端布局边界", () => {
     const detail = readFileSync(join(process.cwd(), "app/hexagrams/[number]/page.tsx"), "utf8");
     expect(detail).toContain('className="hexagram-reading-card"');
     expect(detail).toContain('aria-label="卦象、卦象摘要与经典卦文"');
+    expect(detail).toContain('className="detail-hero hexagram-reading-left"');
     expect(detail).toContain('className="hexagram-classic-sections"');
-    expect(detail.indexOf('className="hexagram-classic-sections"')).toBeLessThan(detail.indexOf('className="detail-hero"'));
+    expect(detail.indexOf('className="detail-hero hexagram-reading-left"')).toBeLessThan(detail.indexOf('className="hexagram-classic-sections"'));
     expect(detail).not.toContain('<div className="structure-table">{hexagram.lines.map');
     expect(detail).toContain('className="plain-translation-label">白话解读');
     expect(detail).toContain('className="context-note-shortcut line-notes"');
+    expect(styles).toContain(".hexagram-reading-layout {\n  display: grid;");
+    expect(styles).toContain(".hexagram-reading-card .hexagram-classic-sections {\n  grid-template-columns: 1fr;");
+    expect(styles).toContain("@media (min-width: 901px) {\n  .hexagram-reading-layout > .hexagram-classic-sections {");
     expect(styles).toContain(".hexagram-classic-sections {\n  display: grid;");
     expect(styles).toContain(".context-note-shortcut > summary {");
   });

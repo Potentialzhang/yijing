@@ -8066,6 +8066,28 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   color: var(--muted);
   font-size: 10px;
 }
+.hexagram-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(230px, .82fr) minmax(0, 1.6fr);
+  gap: 14px;
+  align-items: start;
+}
+.hexagram-reading-card .detail-hero.hexagram-reading-left {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.hexagram-reading-card .detail-visual,
+.hexagram-reading-card .detail-copy {
+  padding: 20px;
+  border-radius: 13px;
+  box-shadow: none;
+}
+.hexagram-reading-card .detail-visual {
+  min-height: 250px;
+}
 .hexagram-classic-sections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -8101,20 +8123,16 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 .hexagram-classic-sections .plain-translation {
   color: var(--ink);
 }
+.hexagram-reading-card .hexagram-classic-sections {
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 0;
+}
 .hexagram-detail-page .hexagram-study-sections {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .hexagram-detail-page .hexagram-study-sections .study-feature-wide {
   grid-column: auto;
-}
-.hexagram-reading-card .detail-hero {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-.hexagram-reading-card .detail-visual,
-.hexagram-reading-card .detail-copy {
-  box-shadow: none;
 }
 .context-note-shortcut {
   margin-top: 18px;
@@ -8191,7 +8209,28 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     margin-top: 10px;
     padding-top: 10px;
   }
+  .hexagram-reading-card .detail-hero.hexagram-reading-left {
+    margin-top: 0;
+    padding-top: 0;
+  }
   .context-note-shortcut {
     margin-top: 14px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hexagram-reading-layout {
+    grid-template-columns: 1fr;
+  }
+  .hexagram-reading-layout > .hexagram-classic-sections {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (min-width: 901px) {
+  .hexagram-reading-layout > .hexagram-classic-sections {
+    padding-left: 14px;
+    border-left: 1px solid var(--line);
   }
 }

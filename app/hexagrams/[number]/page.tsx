@@ -69,32 +69,33 @@ export default async function HexagramDetailPage({ params }: { params: Promise<{
 
       <section className="hexagram-reading-card" aria-label="卦象、卦象摘要与经典卦文">
         <div className="hexagram-reading-card-header"><span className="content-label">卦文与卦象</span><small>原文 · 白话 · 上下卦结构</small></div>
-        <section className="hexagram-classic-sections" aria-label="经典卦文">
-          <article className="study-feature-card classic-text-card">
-            <span className="content-label">卦辞</span>
-            <h2>{study.judgment}</h2>
-            <p>{study.judgmentInterpretation}</p>
-          </article>
-          <article className="study-feature-card classic-text-card">
-            <span className="content-label">彖传</span>
-            <h2>《彖》曰</h2>
-            <p className="canonical-passage">{study.tuan}</p>
-            <p className="plain-translation-label">白话解读</p>
-            <p className="plain-translation">{study.tuanInterpretation}</p>
-          </article>
-          <article className="study-feature-card classic-text-card">
-            <span className="content-label">象传</span>
-            <h2>《象》曰</h2>
-            <p className="canonical-passage">{study.xiang}</p>
-            <p className="plain-translation-label">白话解读</p>
-            <p className="plain-translation">{study.xiangInterpretation}</p>
-          </article>
-        </section>
-
-        <section className="detail-hero">
+        <div className="hexagram-reading-layout">
+          <div className="detail-hero hexagram-reading-left">
           <div className="detail-visual"><HexagramGlyph lines={hexagram.lines} label={`${study.shortName}六爻`} /><strong className="detail-unicode">{hexagram.unicodeSymbol}</strong><span>{study.shortName} · 第 {hexagram.kingWenNumber} 卦</span></div>
           <div className="detail-copy"><span className="content-label">卦象摘要</span><h2>{hexagram.name}</h2><p>{study.image}</p><div className="structure-table hexagram-trigram-table"><div><span>下卦</span><div className="trigram-inline"><TrigramGlyph lines={lowerTrigram.lines} label={`下卦${lowerTrigram.name}三爻`} /><strong>{lowerTrigram.name}</strong></div><small>{lowerTrigram.nature} · {lowerTrigram.element} · {lowerTrigram.direction}</small></div><div><span>上卦</span><div className="trigram-inline"><TrigramGlyph lines={upperTrigram.lines} label={`上卦${upperTrigram.name}三爻`} /><strong>{upperTrigram.name}</strong></div><small>{upperTrigram.nature} · {upperTrigram.element} · {upperTrigram.direction}</small></div></div></div>
-        </section>
+          </div>
+          <section className="hexagram-classic-sections" aria-label="经典卦文">
+            <article className="study-feature-card classic-text-card">
+              <span className="content-label">卦辞</span>
+              <h2>{study.judgment}</h2>
+              <p>{study.judgmentInterpretation}</p>
+            </article>
+            <article className="study-feature-card classic-text-card">
+              <span className="content-label">彖传</span>
+              <h2>《彖》曰</h2>
+              <p className="canonical-passage">{study.tuan}</p>
+              <p className="plain-translation-label">白话解读</p>
+              <p className="plain-translation">{study.tuanInterpretation}</p>
+            </article>
+            <article className="study-feature-card classic-text-card">
+              <span className="content-label">象传</span>
+              <h2>《象》曰</h2>
+              <p className="canonical-passage">{study.xiang}</p>
+              <p className="plain-translation-label">白话解读</p>
+              <p className="plain-translation">{study.xiangInterpretation}</p>
+            </article>
+          </section>
+        </div>
       </section>
       <HexagramLearningStatus hexagramId={hexagram.id} />
       <div className="test-academy-link" aria-label="统一测试入口"><span>想用题目检验记忆？</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
