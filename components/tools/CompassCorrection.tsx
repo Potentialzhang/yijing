@@ -93,7 +93,7 @@ export function CompassCorrection({
         `已${offset === 0 ? "重置" : "应用"}手动修正 ${offset > 0 ? "+" : ""}${offset.toFixed(1)}°`,
       );
     } catch {
-      if (mountedRef.current) setStatus("修正保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setStatus("修正保存失败，请检查网络和账户会话后重试");
     } finally {
       if (mountedRef.current) setSaving(false);
     }

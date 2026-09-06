@@ -52,7 +52,7 @@ export function CompassRecords({
         if (sequence !== refreshSequence.current) return;
         setLoading(false);
         setLoadError(true);
-        setStatus("历史坐向记录暂时无法读取，请检查浏览器存储权限后重试");
+        setStatus("历史坐向记录暂时无法读取，请检查网络和账户会话后重试");
       });
   }, []);
 
@@ -92,7 +92,7 @@ export function CompassRecords({
       setEnvironmentNote("");
       setStatus(`已保存 ${direction.label} · ${normalizedDegrees.toFixed(1)}°`);
     } catch {
-      if (mountedRef.current) setStatus("坐向保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setStatus("坐向保存失败，请检查网络和账户会话后重试");
     } finally {
       if (mountedRef.current) setSaving(false);
     }

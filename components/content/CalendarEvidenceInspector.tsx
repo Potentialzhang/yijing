@@ -14,6 +14,7 @@ import {
   CALENDAR_EVIDENCE_RULE_SET,
   validateCalendarEvidenceRegistry,
 } from "@/content/calendar-evidence";
+import { DRAFT_CALENDAR_RULE_SET } from "@/core/calendar/rules";
 
 const BOUNDARY_LABELS: Record<(typeof CALENDAR_EVIDENCE_BOUNDARIES)[number], string> = {
   year: "换年",
@@ -26,7 +27,7 @@ const BOUNDARY_LABELS: Record<(typeof CALENDAR_EVIDENCE_BOUNDARIES)[number], str
 
 const EMPTY_TEMPLATE = JSON.stringify(
   {
-    ruleSet: CALENDAR_EVIDENCE_RULE_SET,
+    ruleSet: DRAFT_CALENDAR_RULE_SET,
     samples: [],
   },
   null,
@@ -193,7 +194,7 @@ export function CalendarEvidenceInspector() {
       </div>
       <p>
         可粘贴或选择内容负责人提供的 JSON 样例包，也可以重新载入本工具生成的校验报告。这里会检查字段、规则版本、来源引用和六类边界覆盖，
-        但不会写入内置内容，也不会生成农历、节气或干支结果。
+        但不会写入内置内容，也不会改变账户数据库或生成农历、节气和干支结果。
       </p>
       <div className="content-audit-evidence-actions">
         <label className="outline-button content-audit-file-label">

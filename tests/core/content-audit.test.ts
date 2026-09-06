@@ -16,11 +16,11 @@ describe("内容复核交接包", () => {
       judgments: { total: 64, verified: 64 },
       lines: { total: 384, verified: 384 },
       calendarEvidence: {
-        ruleVersion: "calendar-draft-1",
-        ruleStatus: "draft",
-        sampleCount: 0,
-        verifiedSampleCount: 0,
-        complete: false,
+        ruleVersion: "calendar-lichun-jie-midnight-v1",
+        ruleStatus: "accepted",
+        sampleCount: 6,
+        verifiedSampleCount: 6,
+        complete: true,
       },
       releaseGate: { ready: false },
     });
@@ -31,10 +31,8 @@ describe("内容复核交接包", () => {
     expect(report.lines.items[0]).not.toHaveProperty("canonicalText");
     expect(report.concepts.items[0]).not.toHaveProperty("body");
     expect(report.sources.items[0]).toHaveProperty("copyrightNote");
-    expect(report.calendarEvidence.missingBoundaries).toEqual([
-      "year", "month", "day", "zi-hour", "time-zone", "solar-term",
-    ]);
-    expect(report.calendarEvidence.authoritativeSampleIds).toEqual([]);
+    expect(report.calendarEvidence.missingBoundaries).toEqual([]);
+    expect(report.calendarEvidence.authoritativeSampleIds).toHaveLength(6);
   });
 
   it("序列化结果是带换行的有效 JSON", () => {
@@ -315,9 +313,9 @@ describe("内容复核交接包", () => {
       ...report,
       calendarEvidence: {
         ...report.calendarEvidence,
-        ruleStatus: "accepted",
+        complete: false,
       },
-    } as never)).toThrow(/accepted 历法规则/);
+    } as never)).toThrow(/历法样例覆盖统计或完成状态不一致/);
   });
 
   it("拒绝历法边界明细与汇总覆盖不一致", () => {

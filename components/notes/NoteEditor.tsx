@@ -81,7 +81,7 @@ export function NoteEditor({
           if (mounted && sequence === refreshSequence.current) setLoaded(true);
         })
         .catch(() => {
-          if (mounted && sequence === refreshSequence.current) setStatus("笔记读取失败，请检查浏览器存储权限后重试");
+          if (mounted && sequence === refreshSequence.current) setStatus("笔记读取失败，请检查网络和账户会话后重试");
         });
     };
     refresh();
@@ -153,7 +153,7 @@ export function NoteEditor({
         notifyDataChanged();
         if (mountedRef.current) setStatus(`已保存于 ${formatLocalDateTime(now)}`);
       } catch {
-        if (mountedRef.current) setStatus("保存失败，请检查浏览器存储权限后重试");
+        if (mountedRef.current) setStatus("保存失败，请检查网络和账户会话后重试");
       }
     });
     await operation;
@@ -210,7 +210,7 @@ export function NoteEditor({
         setUndoSnapshot(null);
       }, 30_000);
     } catch {
-      if (mountedRef.current) setStatus("删除失败，请检查浏览器存储权限后重试");
+        if (mountedRef.current) setStatus("删除失败，请检查网络和账户会话后重试");
     } finally {
       mutationBusyRef.current = false;
       if (mountedRef.current) setMutationBusy(false);

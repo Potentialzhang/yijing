@@ -119,7 +119,7 @@ export function HexagramLab({ id = "lab" }: { id?: string } = {}) {
       if (!mountedRef.current) return;
       setSnapshotTitle(""); setSnapshotNote(""); setShareStatus("推演快照已保存");
     } catch {
-      if (mountedRef.current) setShareStatus("推演快照保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setShareStatus("推演快照保存失败，请检查网络和账户会话后重试");
     } finally {
       if (mountedRef.current) setSnapshotSaving(false);
     }

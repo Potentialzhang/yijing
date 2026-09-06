@@ -2,14 +2,33 @@ import { Solar } from "lunar-typescript";
 import { interpretCalendarTime, normalizeCalendarInput } from "./input";
 import type { CalendarInput, CalendarReading, CalendarRuleSet, SexagenaryValue, SolarTermEvent } from "./types";
 
-export const CALENDAR_RULES: readonly CalendarRuleSet[] = ["midnight", "zi"].map((boundary) => ({
+const CALENDAR_SAMPLE_IDS = {
+  midnight: [
+    "calendar-midnight-year-2026",
+    "calendar-midnight-month-2026",
+    "calendar-midnight-day-2026",
+    "calendar-midnight-zi-hour-2026",
+    "calendar-midnight-time-zone-2026",
+    "calendar-midnight-solar-term-2026",
+  ],
+  zi: [
+    "calendar-zi-year-2026",
+    "calendar-zi-month-2026",
+    "calendar-zi-day-2026",
+    "calendar-zi-hour-2026",
+    "calendar-zi-time-zone-2026",
+    "calendar-zi-solar-term-2026",
+  ],
+} as const;
+
+export const CALENDAR_RULES: readonly CalendarRuleSet[] = (["midnight", "zi"] as const).map((boundary) => ({
   id: `calendar-lichun-jie-${boundary}-v1`,
   yearBoundary: "lichun",
   monthBoundary: "solar-term-month",
   dayBoundary: boundary === "zi" ? "zi-hour" : "civil-midnight",
   timeZoneBasis: "standard-time",
   sourceIds: ["source-lunar-typescript", "source-hko-calendar"],
-  authoritativeSampleIds: ["hko-2026-new-year", "hko-2026-lichun"],
+  authoritativeSampleIds: [...CALENDAR_SAMPLE_IDS[boundary]],
   status: "accepted",
 }));
 

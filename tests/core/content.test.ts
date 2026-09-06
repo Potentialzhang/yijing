@@ -318,7 +318,9 @@ describe("首批内容完整性", () => {
     expect(branchKinds).toEqual(new Set(["branch-element", "branch-direction", "branch-hour", "branch-name"]));
     expect(EXERCISES.filter((exercise) => exercise.targetId === "heavenly-stems" && exercise.mode !== "review")).toHaveLength(3);
     expect(EXERCISES.filter((exercise) => exercise.targetId === "earthly-branches" && exercise.mode !== "review")).toHaveLength(3);
-    expect(EXERCISES.filter((exercise) => exercise.mode === "review")).toHaveLength(137);
+    const classicKinds = new Set(["hexagram-judgment", "hexagram-line-meaning", "hexagram-guess"]);
+    expect(EXERCISES.filter((exercise) => exercise.mode === "review" && !classicKinds.has(exercise.kind))).toHaveLength(137);
+    expect(EXERCISES.filter((exercise) => exercise.mode === "review")).toHaveLength(649);
   });
 
   it("干支关系按五合、六合、六冲分层且数量固定", () => {

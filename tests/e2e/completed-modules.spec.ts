@@ -89,7 +89,7 @@ test.describe("四个补全模块", () => {
     await expect(page.getByLabel("AI 个性化练习")).toContainText("回答正确");
     await workspace.getByText("审阅并保存完整草稿（含答案）", { exact: true }).click();
     await workspace.getByRole("button", { name: "接受草稿" }).click();
-    await expect(workspace).toContainText("已保存为本地笔记");
+    await expect(workspace).toContainText("已保存到账户笔记");
     await page.getByRole("button", { name: "撤销 AI 授权并清除范围" }).click();
     await expect(workspace.getByRole("button", { name: "预览本次实际发送内容" })).toBeDisabled();
     await page.goto("/notes");
@@ -114,7 +114,7 @@ test.describe("四个补全模块", () => {
       await page.locator(".ai-scope-option").filter({ hasText: "我选定的笔记" }).locator("input").check();
       const workspace = page.getByLabel("真实 AI 辅学");
       await workspace.getByLabel("辅学任务").selectOption(kind);
-      await workspace.getByRole("button", { name: "载入本地笔记与作答记录" }).click();
+      await workspace.getByRole("button", { name: "载入账户笔记与作答记录" }).click();
       const notes = workspace.locator("details").filter({ has: page.getByText("选定笔记（最多 10 篇）", { exact: true }) });
       await expect(notes.getByRole("checkbox")).toHaveCount(2);
       await notes.getByRole("checkbox").first().check();
@@ -126,7 +126,7 @@ test.describe("四个补全模块", () => {
       const payload = posted[0] as { selectedData: Record<string, unknown[]> };
       expect(payload.selectedData["note.markdown"]).toHaveLength(kind === "note-draft" ? 1 : 2);
       await workspace.getByRole("button", { name: "接受草稿" }).click();
-      await expect(workspace).toContainText("已保存为本地笔记");
+      await expect(workspace).toContainText("已保存到账户笔记");
       await page.goto("/hexagrams/1");
       await expect(page.getByRole("textbox", { name: "个人笔记" })).toHaveValue("乾的开创也需要适时潜藏。");
     });

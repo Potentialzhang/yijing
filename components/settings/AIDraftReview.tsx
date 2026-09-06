@@ -13,7 +13,7 @@ import {
 const STATUS_LABELS: Record<AiDraftReview["status"], string> = {
   pending: "待审阅",
   editing: "编辑中",
-  accepted: "已接受（仅本地草稿）",
+  accepted: "已接受（账户草稿）",
   rejected: "已拒绝",
 };
 
@@ -52,7 +52,7 @@ export function AIDraftReview({ draft, onAccept }: { draft: AiDraftOutput; onAcc
           <h3>审阅草稿，再决定是否接受。</h3>
         </div>
         <span role="status" aria-live="polite" aria-atomic="true">
-          {review.status === "accepted" && onAccept ? "已保存为本地笔记" : STATUS_LABELS[review.status]}
+          {review.status === "accepted" && onAccept ? "已保存到账户笔记" : STATUS_LABELS[review.status]}
         </span>
       </div>
       <p className="ai-draft-review-note">

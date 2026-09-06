@@ -12,11 +12,25 @@ for (let number = 1; number <= 64; number++) {
   if (!response.ok) throw new Error(`${file}: ${response.status}`);
   const raw = await response.text();
   const blocks = raw.split(/<pb:[^>]+>/).slice(1).map(s => s.replace(/[¶\s]/g, ''));
+  const cleaned = raw.replace(/<pb:[^>]+>/g, '').replace(/[¶\s]/g, '');
   const judgment = blocks.find(b => /^《[^》]+》(?!曰)/.test(b));
   const lines = blocks.filter(b => /^(初[九六]|[九六][二三四五]|上[九六])[：、]/.test(b));
   if (!judgment || lines.length !== 6) throw new Error(`${file}: judgment=${!!judgment}, lines=${lines.length}`);
   const extras = blocks.filter(b => /^用[九六][：、]/.test(b));
-  rows.push({ number, title: judgment.match(/^《([^》]+)》/)[1], judgment, lines, extras,
+  const tuanStart = cleaned.indexOf('《彖》曰：');
+  const xiangStart = cleaned.indexOf('《象》曰：', tuanStart);
+  const afterXiang = cleaned.slice(xiangStart);
+  const endMarkers = [
+    afterXiang.search(/初[九六][：、]/),
+    afterXiang.search(/《(?:文言|繫辭|說卦|序卦|雜卦)》曰：/),
+  ].filter((index) => index >= 0);
+  const firstSectionAfterXiang = endMarkers.length ? Math.min(...endMarkers) : -1;
+  if (tuanStart < 0 || xiangStart < 0 || firstSectionAfterXiang < 0) {
+    throw new Error(`${file}: missing 卦彖/卦象传`);
+  }
+  const tuan = cleaned.slice(tuanStart + '《彖》曰：'.length, xiangStart);
+  const xiang = cleaned.slice(xiangStart + '《象》曰：'.length, xiangStart + firstSectionAfterXiang);
+  rows.push({ number, title: judgment.match(/^《([^》]+)》/)[1], judgment, lines, extras, tuan, xiang,
     sourceUrl: `https://github.com/kanripo/KR1a0001/blob/${revision}/${file}`,
     sourceSha256: createHash('sha256').update(raw).digest('hex') });
   console.log(`Imported ${number}/64`);

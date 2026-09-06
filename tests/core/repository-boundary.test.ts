@@ -355,7 +355,7 @@ describe("数据库访问边界", () => {
 
   it("笔记聚合读取失败时不会静默显示空知识库", () => {
     const notesPage = readFileSync(join(process.cwd(), "app/notes/page.tsx"), "utf8");
-    expect(notesPage).toContain("正在读取本地笔记");
+    expect(notesPage).toContain("正在读取账户笔记");
     expect(notesPage).toContain("笔记暂时无法读取");
     expect(notesPage).toContain("onClick={refresh}");
     expect(notesPage).not.toContain(".catch(() => undefined)");
@@ -458,7 +458,7 @@ describe("数据库访问边界", () => {
     const selfTest = readFileSync(join(process.cwd(), "components/onboarding/SelfTest.tsx"), "utf8");
     expect(selfTest).toContain("const [pendingSave, setPendingSave] = useState<SelfTestResult | null>(null)");
     expect(selfTest).toContain("const [saveError, setSaveError] = useState(false)");
-    expect(selfTest).toContain("结果尚未保存到本地。");
+    expect(selfTest).toContain("结果尚未保存到账户数据库。");
     expect(selfTest).toContain("重试保存");
     expect(selfTest).toContain("onClick={() => void saveResult(pendingSave)}");
     expect(selfTest).toContain("setPendingSave(nextResult)");
@@ -608,7 +608,7 @@ describe("数据库访问边界", () => {
 
   it("首页勘误汇总读取失败时不会静默显示为空记录", () => {
     const feedback = readFileSync(join(process.cwd(), "components/content/ContentAuditFeedback.tsx"), "utf8");
-    expect(feedback).toContain("正在读取本地勘误记录");
+    expect(feedback).toContain("正在读取账户勘误记录");
     expect(feedback).toContain("勘误记录暂时无法读取");
     expect(feedback).toContain("onClick={refresh}");
     expect(feedback).not.toContain(".catch(() => undefined)");
@@ -692,7 +692,7 @@ describe("数据库访问边界", () => {
 
   it("详情勘误读取失败时保护表单并提供重试", () => {
     const errata = readFileSync(join(process.cwd(), "components/content/ContentErrata.tsx"), "utf8");
-    expect(errata).toContain("正在读取本地勘误记录");
+    expect(errata).toContain("正在读取账户勘误记录");
     expect(errata).toContain("勘误记录暂时无法读取");
     expect(errata).toContain("onClick={retryRead}");
     expect(errata).toContain("const writeDisabled = loading || readError || writing");

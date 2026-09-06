@@ -1,4 +1,5 @@
-import { getHexagramByPair, HEXAGRAMS } from "@/core/iching";
+import { getHexagramByPair, getTrigram, HEXAGRAMS } from "@/core/iching";
+import { getHexagramJudgment, getHexagramLineTexts } from "./hexagrams";
 import { FIVE_ELEMENTS } from "./five-elements";
 import { TRIGRAMS } from "@/core/iching";
 import { KNOWLEDGE_CONCEPTS } from "./knowledge";
@@ -6,7 +7,7 @@ import { EARTHLY_BRANCHES, HEAVENLY_STEMS } from "./sexagenary";
 import { HETU_GROUPS, NINE_PALACES } from "./hetu-luoshu";
 import { SEXAGENARY_RELATIONS } from "./sexagenary-relations";
 
-export type ExerciseKind = "concept-recall" | "trigram-name" | "trigram-lines" | "trigram-lines-name" | "trigram-name-lines" | "trigram-arrange-lines" | "trigram-element" | "trigram-direction" | "trigram-direction-name" | "trigram-nature" | "trigram-nature-name" | "trigram-family" | "trigram-body" | "five-generates" | "five-controls" | "hexagram-pair" | "hexagram-line" | "stem-element" | "stem-yinyang" | "stem-name" | "branch-element" | "branch-direction" | "branch-hour" | "branch-name" | "hetu-direction" | "hetu-element" | "hetu-numbers" | "palace-direction" | "palace-number" | "palace-trigram" | "sexagenary-relation";
+export type ExerciseKind = "concept-recall" | "trigram-name" | "trigram-lines" | "trigram-lines-name" | "trigram-name-lines" | "trigram-arrange-lines" | "trigram-element" | "trigram-direction" | "trigram-direction-name" | "trigram-nature" | "trigram-nature-name" | "trigram-family" | "trigram-body" | "five-generates" | "five-controls" | "hexagram-pair" | "hexagram-judgment" | "hexagram-line" | "hexagram-line-meaning" | "hexagram-guess" | "stem-element" | "stem-yinyang" | "stem-name" | "branch-element" | "branch-direction" | "branch-hour" | "branch-name" | "hetu-direction" | "hetu-element" | "hetu-numbers" | "palace-direction" | "palace-number" | "palace-trigram" | "sexagenary-relation";
 export type ExerciseResponseType = "choice" | "text";
 
 export interface Exercise {
@@ -45,6 +46,9 @@ const hetuNumberPairs = HETU_GROUPS.map((item) => item.numbers.join("、"));
 const palaceDirections = NINE_PALACES.map((item) => item.direction);
 const palaceNumbers = NINE_PALACES.map((item) => String(item.number));
 const palaceTrigrams = NINE_PALACES.map((item) => item.trigramId);
+const judgmentRecords = HEXAGRAMS.map((hexagram) => ({ hexagram, judgment: getHexagramJudgment(hexagram.id) }));
+const lineRecords = HEXAGRAMS.flatMap((hexagram) => getHexagramLineTexts(hexagram.id).map((line) => ({ hexagram, line })));
+const lineMeanings = lineRecords.map(({ line }) => line.blocks[0]?.markdown ?? "");
 
 function choices(answer: string, pool: readonly string[], offsets: number[] = [1, 3]): string[] {
   // Some source fields are intentionally repeated (for example, the central
@@ -94,6 +98,13 @@ export const EXERCISES: readonly Exercise[] = [
   ...FIVE_ELEMENTS.map((element) => ({ id: `five-generates-${element.id}`, kind: "five-generates" as const, prompt: `${element.name}生什么？`, targetType: "five-element" as const, targetId: element.id, display: element.name, choices: choices(element.generates, elements), answer: element.generates, explanation: `相生环为木→火→土→金→水→木，${element.name}生${element.generates}。` })),
   ...FIVE_ELEMENTS.map((element) => ({ id: `five-controls-${element.id}`, kind: "five-controls" as const, prompt: `${element.name}克什么？`, targetType: "five-element" as const, targetId: element.id, display: element.name, choices: choices(element.controls, elements), answer: element.controls, explanation: `基础相克关系中，${element.name}克${element.controls}。` })),
   ...TRIGRAMS.flatMap((lower) => TRIGRAMS.map((upper) => { const hexagram = getHexagramByPair(lower.id, upper.id); return { id: `hexagram-pair-${lower.id}-${upper.id}`, kind: "hexagram-pair" as const, prompt: `下卦为${lower.name}、上卦为${upper.name}，组成哪一卦？`, targetType: "hexagram" as const, targetId: hexagram.id, display: `${upper.symbol} / ${lower.symbol}`, choices: choices(hexagram.name, hexagramNames), answer: hexagram.name, explanation: `下卦${lower.name}、上卦${upper.name}对应第${hexagram.kingWenNumber}卦${hexagram.name}。` }; })),
+  ...judgmentRecords.map(({ hexagram, judgment }) => ({ id: `hexagram-judgment-${hexagram.id}`, kind: "hexagram-judgment" as const, mode: "review" as const, prompt: `这条卦辞属于哪一卦？`, targetType: "hexagram" as const, targetId: hexagram.id, display: judgment.canonicalText ?? "", choices: choices(hexagram.name, hexagramNames), answer: hexagram.name, explanation: `${hexagram.name}的卦辞是“${judgment.canonicalText ?? ""}”。${judgment.blocks[0]?.markdown ?? ""}` })),
+  ...lineRecords.map(({ hexagram, line }) => ({ id: `hexagram-line-meaning-${hexagram.id}-${line.position}`, kind: "hexagram-line-meaning" as const, mode: "review" as const, prompt: `这条${hexagram.name}第${line.position}爻的学习释义更接近哪一项？`, targetType: "hexagram" as const, targetId: hexagram.id, display: line.canonicalText ?? "", choices: choices(line.blocks[0]?.markdown ?? "", lineMeanings), answer: line.blocks[0]?.markdown ?? "", explanation: `${hexagram.name}第${line.position}爻：${line.blocks[0]?.markdown ?? ""}` })),
+  ...HEXAGRAMS.map((hexagram) => {
+    const lower = getTrigram(hexagram.lowerTrigramId);
+    const upper = getTrigram(hexagram.upperTrigramId);
+    return { id: `hexagram-guess-${hexagram.id}`, kind: "hexagram-guess" as const, mode: "review" as const, responseType: "text" as const, prompt: `上卦为${upper.name}、下卦为${lower.name}，请填写卦名`, targetType: "hexagram" as const, targetId: hexagram.id, display: `${upper.symbol} / ${lower.symbol}`, choices: [] as string[], answer: hexagram.name, explanation: `下卦${lower.name}、上卦${upper.name}组成${hexagram.name}。` };
+  }),
   ...TRIGRAMS.map((trigram) => ({ id: `hexagram-line-${trigram.id}`, kind: "hexagram-line" as const, prompt: `${trigram.name}为${trigram.nature}的三爻结构是什么？`, targetType: "trigram" as const, targetId: trigram.id, display: trigram.symbol, choices: choices(trigram.lines.join(""), TRIGRAMS.map((item) => item.lines.join(""))), answer: trigram.lines.join(""), explanation: `${trigram.name}的正确结构是${lineDescription(trigram.lines)}。` })),
   ...HEAVENLY_STEMS.map((stem) => ({ id: `stem-element-${stem.id}`, kind: "stem-element" as const, mode: "review" as const, prompt: `天干${stem.name}的五行是什么？`, targetType: "concept" as const, targetId: "heavenly-stems", display: `${stem.name} · ${stem.yinYang}干`, choices: choices(stem.element, [...new Set(stemElements)]), answer: stem.element, explanation: `${stem.name}归入${stem.element}，再与同组天干区分阴阳。` })),
   ...HEAVENLY_STEMS.map((stem) => ({ id: `stem-yinyang-${stem.id}`, kind: "stem-yinyang" as const, mode: "review" as const, prompt: `天干${stem.name}属于哪一类？`, targetType: "concept" as const, targetId: "heavenly-stems", display: `${stem.name} · ${stem.element}`, choices: ["阳", "阴"], answer: stem.yinYang, explanation: `${stem.name}在本阶段的静态字段标记为${stem.yinYang}。` })),

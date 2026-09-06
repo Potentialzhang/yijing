@@ -60,7 +60,7 @@ export function FavoriteButton({ targetType, targetId }: { targetType: "concept"
       setFavorite(nextFavorite);
     } catch {
       if (!mountedRef.current) return;
-      setError("收藏保存失败，请检查浏览器存储权限后重试");
+      setError("收藏保存失败，请检查网络和账户会话后重试");
     } finally {
       if (mountedRef.current) setSaving(false);
     }

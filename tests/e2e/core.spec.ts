@@ -505,7 +505,7 @@ test.describe("易境核心学习流程", () => {
     const serviceWorker = await request.get("/sw.js");
     expect(serviceWorker.ok()).toBe(true);
     const serviceWorkerText = await serviceWorker.text();
-    expect(serviceWorkerText).toContain("yijing-static-v63");
+    expect(serviceWorkerText).toContain("yijing-static-v64");
     expect(serviceWorkerText).toContain("function precacheCoreRoutes");
     expect(serviceWorkerText).toContain("A single temporarily unavailable route");
     expect(serviceWorkerText).toContain("function matchCachedRequest");
@@ -520,8 +520,8 @@ test.describe("易境核心学习流程", () => {
       status: "ok",
       service: "易境",
       appVersion: "0.1.0",
-      serviceWorkerCache: "yijing-static-v63",
-      storage: "local-only",
+      serviceWorkerCache: "yijing-static-v64",
+      storage: "postgresql",
     });
     for (const conceptId of [
       "yin-yang-lines",

@@ -15,7 +15,7 @@ interface ContentErrataProps {
 function makeId(): string { return globalThis.crypto?.randomUUID?.() ?? `errata-${Date.now()}-${Math.random().toString(16).slice(2)}`; }
 
 export function ContentErrata({ targetType, targetId, contentVersion = 1 }: ContentErrataProps) {
-  // Compatibility wording retained for older boundary checks: 正在读取本地勘误记录。
+  // Errata are account-scoped records read from PostgreSQL.
   const [items, setItems] = useState<ContentErratumRecord[]>([]);
   const [category, setCategory] = useState<ContentErratumRecord["category"]>("question");
   const [description, setDescription] = useState("");
@@ -82,7 +82,7 @@ export function ContentErrata({ targetType, targetId, contentVersion = 1 }: Cont
       if (!mountedRef.current) return;
       setDescription(""); setProposedText(""); setSourceRef(""); setStatus("已记录，后续可根据底本复核。");
     } catch {
-      if (mountedRef.current) setStatus("勘误保存失败，请检查浏览器存储权限后重试");
+      if (mountedRef.current) setStatus("勘误保存失败，请检查网络和账户会话后重试");
     } finally {
       if (mountedRef.current) setWriting(false);
     }

@@ -56,7 +56,7 @@ export function AIStudyWorkspace({ enabled, scopes }: { enabled: boolean; scopes
       ]);
       setNotes(loadedNotes.filter(note => !note.deletedAt && note.markdown.trim()));
       setAttempts(loadedAttempts.sort((a, b) => b.reviewedAt.localeCompare(a.reviewedAt)).slice(0, 30));
-      setNoteIds([]); setAttemptIds([]); resetPreview(); setStatus("本地材料已载入，请勾选本次使用的内容。");
+      setNoteIds([]); setAttemptIds([]); resetPreview(); setStatus("账户材料已载入，请勾选本次使用的内容。");
     } catch { setStatus("材料读取失败，请重试。"); }
   }
 
@@ -132,7 +132,7 @@ export function AIStudyWorkspace({ enabled, scopes }: { enabled: boolean; scopes
       <legend>本次任务与材料</legend>
       <label>辅学任务<select value={kind} onChange={event => { setKind(event.target.value as AiOutputKind); resetPreview(); }}>{AI_TASKS.map(task => <option key={task.id} value={task.id}>{task.label}</option>)}</select></label>
       {scopes.includes("selected-content") && <details open><summary>选择知识（最多 4 项）</summary><div className="ai-material-list">{[...KNOWLEDGE_CONCEPTS.map(item => ({ id: item.id, title: item.title })), ...HEXAGRAMS.map(item => ({ id: item.id, title: item.name }))].map(item => <label key={item.id}><input type="checkbox" checked={contentIds.includes(item.id)} disabled={contentIds.length >= 4 && !contentIds.includes(item.id)} onChange={() => { setContentIds(toggle(contentIds, item.id)); resetPreview(); }} />{item.title}</label>)}</div></details>}
-      {(scopes.includes("selected-notes") || scopes.includes("review-history")) && <button type="button" className="outline-button" onClick={loadMaterials}>载入本地笔记与作答记录</button>}
+      {(scopes.includes("selected-notes") || scopes.includes("review-history")) && <button type="button" className="outline-button" onClick={loadMaterials}>载入账户笔记与作答记录</button>}
       {scopes.includes("selected-notes") && <details open><summary>选定笔记（最多 10 篇）</summary>{notes.length ? <div className="ai-material-list">{notes.map(note => <label key={note.id}><input type="checkbox" checked={noteIds.includes(note.id)} disabled={noteIds.length >= 10 && !noteIds.includes(note.id)} onChange={() => { setNoteIds(toggle(noteIds, note.id)); resetPreview(); }} />{note.title || note.markdown.slice(0, 60)}</label>)}</div> : <p>载入后可选择已写下的笔记。</p>}</details>}
       {scopes.includes("review-history") && <details><summary>选择作答记录（最近 30 条）</summary><div className="ai-material-list">{attempts.map(attempt => <label key={attempt.id}><input type="checkbox" checked={attemptIds.includes(attempt.id)} onChange={() => { setAttemptIds(toggle(attemptIds, attempt.id)); resetPreview(); }} />{attempt.promptSnapshot} · {attempt.recallGrade}</label>)}</div></details>}
       <button type="button" className="primary-button" onClick={prepare}>预览本次实际发送内容</button>

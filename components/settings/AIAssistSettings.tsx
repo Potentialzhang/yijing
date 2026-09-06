@@ -100,7 +100,7 @@ export function AIAssistSettings() {
       if (sequence !== refreshSequence.current) return;
       setLoading(false);
       setLoadError(true);
-      setStatus("AI 设置读取失败，请检查浏览器存储权限后重试。");
+      setStatus("AI 设置读取失败，请检查网络和账户会话后重试。");
     });
   }, []);
 
@@ -143,7 +143,7 @@ export function AIAssistSettings() {
     void saveConsent(enabledRef.current, nextScopes, purposeRef.current).then(() => {
       if (mountedRef.current) setStatus("授权范围已保存，仅适用于你下一次明确确认的请求。");
     }).catch(() => {
-      if (mountedRef.current) setStatus("授权范围保存失败，请检查浏览器存储权限后重试。");
+      if (mountedRef.current) setStatus("授权范围保存失败，请检查网络和账户会话后重试。");
     });
   }
 
@@ -159,7 +159,7 @@ export function AIAssistSettings() {
           : "AI 辅学已关闭，不会发送任何数据。",
       );
     }).catch(() => {
-      if (mountedRef.current) setStatus("AI 设置保存失败，请检查浏览器存储权限后重试。");
+      if (mountedRef.current) setStatus("AI 设置保存失败，请检查网络和账户会话后重试。");
     });
   }
 
@@ -195,7 +195,7 @@ export function AIAssistSettings() {
     setScopes([]);
     setPreview(null);
     void saveConsent(false, [], purposeRef.current).then(() => {
-      if (mountedRef.current) setStatus("AI 授权已撤销，后续不再发送材料；本地学习功能不受影响。已发送请求仍受提供方数据政策约束。");
+      if (mountedRef.current) setStatus("AI 授权已撤销，后续不再发送材料；账户学习功能不受影响。已发送请求仍受提供方数据政策约束。");
     }).catch(() => {
       if (mountedRef.current) setStatus("AI 授权撤销保存失败，请稍后重试。");
     });
@@ -303,14 +303,14 @@ export function AIAssistSettings() {
       <section className="ai-policy-panel" aria-label="AI 服务降级与删除策略">
         <div>
           <p className="eyebrow">AI 辅学 · 服务策略</p>
-          <h2>随时撤销，失败时回到本地学习。</h2>
+          <h2>随时撤销，失败时回到账户学习。</h2>
         </div>
         <p>
           {buildAiFallbackNotice("offline").title}：
           {buildAiFallbackNotice("offline").message}
         </p>
         <p>
-          模型请求设置 store=false，不建立远端会话历史。已接受的草稿保存在本地笔记库，可通过笔记和备份功能管理。
+          模型请求设置 store=false，不建立远端会话历史。已接受的草稿保存在账户笔记库，可通过笔记和备份功能管理。
         </p>
         <button
           type="button"

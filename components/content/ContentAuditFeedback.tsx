@@ -55,31 +55,31 @@ export function ContentAuditFeedback() {
   }, [refresh]);
 
   if (loading) return (
-    <section className="content-audit-feedback" aria-label="本地勘误汇总">
+    <section className="content-audit-feedback" aria-label="账户勘误汇总">
       <div>
         <span className="content-label">用户反馈</span>
         <h2>把疑问留在复核队列里。</h2>
       </div>
-      <p className="content-audit-feedback-state" role="status" aria-live="polite">正在读取本地勘误记录…</p>
+      <p className="content-audit-feedback-state" role="status" aria-live="polite">正在读取账户勘误记录…</p>
     </section>
   );
 
   if (loadError) return (
-    <section className="content-audit-feedback" aria-label="本地勘误汇总">
+    <section className="content-audit-feedback" aria-label="账户勘误汇总">
       <div>
         <span className="content-label">用户反馈</span>
         <h2>把疑问留在复核队列里。</h2>
       </div>
       <div className="content-audit-feedback-state is-error" role="alert">
         <strong>勘误记录暂时无法读取</strong>
-        <span>已有反馈不会因本次读取失败而被删除，请检查浏览器存储权限后重试。</span>
+        <span>已有反馈不会因本次读取失败而被删除，请检查网络和账户会话后重试。</span>
         <button type="button" className="outline-button" onClick={refresh}>重新读取</button>
       </div>
     </section>
   );
 
   return (
-    <section className="content-audit-feedback" aria-label="本地勘误汇总">
+    <section className="content-audit-feedback" aria-label="账户勘误汇总">
       <div>
         <span className="content-label">用户反馈</span>
         <h2>把疑问留在复核队列里。</h2>

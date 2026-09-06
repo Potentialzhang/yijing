@@ -72,6 +72,7 @@ function ReviewDisplay({ card }: { card: (typeof cards)[number] }) {
     return (
       <TrigramGlyph lines={trigram.lines} label={`${trigram.name}三爻结构`} />
     );
+  if (isTrigramSignature(card.display)) return <TrigramSignatureVisual value={card.display} />;
   return <>{card.display}</>;
 }
 
@@ -178,7 +179,7 @@ export function ReviewSession() {
       )
       .catch(() => {
         if (sequence !== loadSequence.current) return;
-        setLoadError("复习队列暂时无法读取，请检查浏览器存储权限后重试。");
+        setLoadError("复习队列暂时无法读取，请检查网络和账户会话后重试。");
         setLoading(false);
       });
   }, []);

@@ -147,10 +147,10 @@ export default function NotesPage() {
     return [...options.entries()].sort((a, b) => a[1].localeCompare(b[1], "zh-CN"));
   }, [activeNotes, favorites]);
   if (loading) {
-    return <main className="subpage database-loading" aria-live="polite"><span className="eyebrow">个人知识库</span><h1>正在读取本地笔记…</h1><p className="subpage-lead">正在整理笔记、收藏和来源索引。</p></main>;
+    return <main className="subpage database-loading" aria-live="polite"><span className="eyebrow">个人知识库</span><h1>正在读取账户笔记…</h1><p className="subpage-lead">正在从账户数据库整理笔记、收藏和来源索引。</p></main>;
   }
   if (loadError) {
-    return <main className="subpage error-state" role="alert"><span className="eyebrow">个人知识库</span><h1>笔记暂时无法读取。</h1><p className="subpage-lead">请检查浏览器存储权限后重试；已有记录不会因本次读取失败而被删除。</p><div className="error-actions"><button type="button" className="primary-button" onClick={refresh}>重新读取 <span>↻</span></button><Link className="outline-button" href="/">回到今日</Link></div></main>;
+    return <main className="subpage error-state" role="alert"><span className="eyebrow">个人知识库</span><h1>笔记暂时无法读取。</h1><p className="subpage-lead">请检查网络和账户会话后重试；数据库中的记录不会因本次读取失败而被删除。</p><div className="error-actions"><button type="button" className="primary-button" onClick={refresh}>重新读取 <span>↻</span></button><Link className="outline-button" href="/">回到今日</Link></div></main>;
   }
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = activeNotes.filter((note) => {
@@ -209,7 +209,7 @@ export default function NotesPage() {
     <main className="subpage">
       <header className="subpage-header">
         <Link href="/" className="back-link">← 回到今日</Link>
-        <p className="eyebrow">个人知识库 · 本地笔记</p>
+        <p className="eyebrow">个人知识库 · 账户数据库</p>
         <h1>把理解留下来。</h1>
         <p className="subpage-lead">笔记、收藏与来源保存到当前账户数据库。先在详情页留下自己的理解，再回到这里按内容和上下文回看。</p>
       </header>

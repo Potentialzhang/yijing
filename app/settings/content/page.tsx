@@ -67,7 +67,7 @@ export default function ContentSettingsPage() {
         <p className="eyebrow">设置 · 内容治理</p>
         <h1>先确认来源，再扩展解释。</h1>
         <p className="subpage-lead">
-          这里集中显示内置内容、经典文本和来源的复核状态。此页只读，不会替内容负责人确认版本，也不会把待校对内容升级为原文。
+          这里集中显示内置内容、经典文本和来源的复核状态。此页只读，不会替内容负责人确认版本；已核验的经典正文会标明来源，待复核资料仍保持独立状态。
         </p>
       </header>
 
@@ -81,9 +81,9 @@ export default function ContentSettingsPage() {
 
       <section className="pending-content content-audit-section" aria-labelledby="content-audit-gate">
         <span className="content-label">发布门禁</span>
-        <h2 id="content-audit-gate">当前仍有待复核内容</h2>
+        <h2 id="content-audit-gate">经典正文已核验，仍有资料待复核</h2>
         <p>
-          经典底本、现代参考资料、卦辞和爻辞在完成版本、授权和映射复核前，只保留结构化占位与来源状态。学习页面会明确显示“待校对”，不会使用自动生成文本填充原文。
+          64 条卦辞和 384 条爻辞已按 Kanripo 固定修订转录登记，学习页面可直接展示经典正文与项目释义。当前发布门禁仍由未发布知识点和现代资料版本/授权复核控制，不会用 AI 内容冒充经典。
         </p>
         <ol className="content-audit-checklist">
           <li>确认经典底本、版本、出版信息和可收录范围。</li>
@@ -101,7 +101,7 @@ export default function ContentSettingsPage() {
           <span>{calendarCoverage.verifiedSampleCount} / {calendarCoverage.sampleCount} 已核验</span>
         </div>
         <p className="content-audit-manifest-intro">
-          当前规则集 <code>{CALENDAR_EVIDENCE_RULE_SET.id}</code> 仍是草案；此处只登记来源和权威样例的覆盖状态，不展示或推导农历、节气和干支结果。规则未接受前，应用不会自动排盘。
+          当前规则集 <code>{CALENDAR_EVIDENCE_RULE_SET.id}</code> 已接受，六类边界均有已核验样例。历法工具会按选定规则计算农历、年月日时干支和二十四节气；这里仍保留只读的样例交接检查。
         </p>
         <ol className="content-audit-calendar-list">
           {CALENDAR_EVIDENCE_BOUNDARIES.map((boundary) => {
@@ -130,7 +130,7 @@ export default function ContentSettingsPage() {
           <div><span className="content-label">逐项复核清单</span><h2 id="content-audit-manifest-heading">经典文本映射</h2></div>
           <span>64 条卦辞 · 384 条爻辞</span>
         </div>
-        <p className="content-audit-manifest-intro">展开后可按卦序检查每一条记录的状态、内容版本和来源定位；点击记录会回到对应的卦象详情或单爻笔记位置。这里仍然不展示待校对的经典原文。</p>
+        <p className="content-audit-manifest-intro">展开后可按卦序检查每一条记录的状态、内容版本和来源定位；点击记录会回到对应的卦象详情或单爻笔记位置。此清单仅展示复核元数据，不重复粘贴经典原文。</p>
         <details className="content-audit-record-group">
           <summary>卦辞清单 · {verifiedJudgments} / {HEXAGRAM_JUDGMENTS.length} 已核验</summary>
           <ol className="content-audit-records">

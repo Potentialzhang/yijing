@@ -62,7 +62,7 @@ export function HexagramIndex() {
     });
   }, [filterQuery]);
   if (loading) return <div className="hexagram-index-state" role="status" aria-live="polite">正在读取卦象学习状态…</div>;
-  if (loadError) return <div className="hexagram-index-state is-error" role="alert"><strong>卦象学习状态暂时无法读取</strong><span>卦象内容仍可稍后查看，请检查浏览器存储权限后重试。</span><button type="button" className="outline-button" onClick={refreshStatus}>重新读取</button></div>;
+  if (loadError) return <div className="hexagram-index-state is-error" role="alert"><strong>卦象学习状态暂时无法读取</strong><span>卦象内容仍可稍后查看，请检查网络和账户会话后重试。</span><button type="button" className="outline-button" onClick={refreshStatus}>重新读取</button></div>;
   const updateQuery = (value: string) => {
     setQuery(value);
     if (!isComposing.current) setFilterQuery(value);
