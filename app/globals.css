@@ -7652,3 +7652,153 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 .instant-feedback strong .trigram-signature-visual {
   margin-inline: 4px;
 }
+
+/* Responsive 64-hexagram library: eight cards per row on large screens and
+   four cards per row on compact screens. Keep the glyphs compact so the
+   dense library remains readable without horizontal scrolling. */
+.hexagram-index {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+}
+.hexagram-index-card {
+  min-width: 0;
+  min-height: 178px;
+  padding: 9px 8px;
+  gap: 5px;
+}
+.hex-index-top {
+  gap: 3px;
+}
+.hexagram-index-card .hex-number,
+.hex-index-nature {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hexagram-index-card .hex-number {
+  font-size: 10px;
+}
+.hex-index-nature {
+  font-size: 10px;
+}
+.hex-index-visual {
+  gap: 4px;
+  min-height: 78px;
+}
+.hexagram-index-card .hexagram-glyph {
+  width: 54px;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.hexagram-index-card .line-button,
+.hexagram-index-card .line-glyph {
+  width: 50px;
+  min-height: 6px;
+}
+.hexagram-index-card .line-part {
+  height: 5px;
+}
+.hexagram-index-card .line-gap {
+  width: 7px;
+  flex-basis: 7px;
+}
+.hex-index-trigrams {
+  gap: 3px;
+}
+.hex-index-trigrams .trigram-glyph {
+  width: 19px;
+  gap: 2px;
+}
+.hex-index-trigrams .trigram-line {
+  height: 4px;
+}
+.hex-index-trigrams .line-glyph {
+  width: 17px;
+  min-height: 4px;
+}
+.hex-index-trigrams .line-part {
+  height: 3px;
+}
+.hex-index-trigrams .line-gap {
+  width: 4px;
+  flex-basis: 4px;
+}
+.hex-index-copy strong {
+  font-size: 15px;
+}
+.hex-index-copy small {
+  font-size: 9px;
+}
+
+@media (max-width: 760px) {
+  .hexagram-index {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .hexagram-index-card {
+    min-height: 158px;
+    padding: 8px 6px;
+    gap: 4px;
+  }
+  .hex-index-top {
+    gap: 2px;
+  }
+  .hexagram-index-card .hex-number,
+  .hex-index-nature {
+    font-size: 9px;
+  }
+  .hex-index-visual {
+    gap: 4px;
+    min-height: 68px;
+  }
+  .hexagram-index-card .hexagram-glyph {
+    width: 52px;
+  }
+  .hexagram-index-card .line-button,
+  .hexagram-index-card .line-glyph {
+    width: 48px;
+  }
+  .hexagram-index-card .line-part {
+    height: 4px;
+  }
+  .hexagram-index-card .line-gap {
+    width: 6px;
+    flex-basis: 6px;
+  }
+  .hex-index-trigrams .trigram-glyph {
+    width: 18px;
+  }
+  .hex-index-trigrams .line-glyph {
+    width: 16px;
+  }
+  .hex-index-copy strong {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 430px) {
+  .hexagram-index {
+    gap: 6px;
+  }
+  .hexagram-index-card {
+    min-height: 150px;
+    padding: 7px 5px;
+  }
+  .hex-index-visual {
+    min-height: 64px;
+  }
+  .hexagram-index-card .hexagram-glyph {
+    width: 50px;
+  }
+  .hexagram-index-card .line-button,
+  .hexagram-index-card .line-glyph {
+    width: 46px;
+  }
+  .hex-index-trigrams .trigram-glyph {
+    width: 17px;
+  }
+  .hex-index-trigrams .line-glyph {
+    width: 15px;
+  }
+}
