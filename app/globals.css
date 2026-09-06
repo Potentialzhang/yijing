@@ -7698,6 +7698,10 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 .hex-index-copy small {
   font-size: 9px;
 }
+.hex-index-copy {
+  justify-items: center;
+  text-align: center;
+}
 
 @media (max-width: 900px) {
   .hexagram-index {
