@@ -5,6 +5,7 @@ describe("路由文档标题", () => {
   it("为静态页面生成描述性标题", () => {
     expect(documentTitleForPathname("/")).toBe("今日 · 易境");
     expect(documentTitleForPathname("/tools/compass")).toBe("学习罗盘 · 易境");
+    expect(documentTitleForPathname("/library")).toBe("易学知识库 · 易境");
     expect(documentTitleForPathname("/settings/ai")).toBe("AI 辅学设置 · 易境");
   });
 

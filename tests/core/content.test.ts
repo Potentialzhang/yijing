@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import commentarySeed from "@/content/commentary-seed.json";
 import {
   assertCanonicalTextStatus,
   assertContentBlockSourcePolicy,
@@ -27,8 +28,27 @@ import { DRAFT_CALENDAR_RULE_SET } from "@/core/calendar/rules";
 import { assertTrimmedIdentifier } from "@/core/content/identifiers";
 import { parseContentSourceHandoff, serializeContentSourceHandoff } from "@/core/content/source-handoff";
 import type { ContentErratumRecord } from "@/db/schema";
-
 describe("首批内容完整性", () => {
+  it("《伊川易传》原注覆盖六十四卦且来源固定到修订", () => {
+    const items = commentarySeed.commentaries.filter((item) => item.id.endsWith("-chengyi-kanripo"));
+    expect(items).toHaveLength(64);
+    expect(new Set(items.map((item) => item.hexagramId)).size).toBe(64);
+    expect(items.every((item) => item.excerpt.length >= 40 && item.locator.includes("KR1a0016_"))).toBe(true);
+    const source = commentarySeed.sources.find((item) => item.id === "source-yichuan-kanripo");
+    expect(source?.revision).toMatch(/^[a-f0-9]{40}$/);
+  });
+  it("程颐、朱熹与王弼孔颖达三家原注逐卦覆盖且固定版本", () => {
+    const suffixes = ["-chengyi-kanripo", "-zhuxi-kanripo", "-wangkong-kanripo"];
+    for (const suffix of suffixes) {
+      const items = commentarySeed.commentaries.filter((item) => item.id.endsWith(suffix));
+      expect(items).toHaveLength(64);
+      expect(new Set(items.map((item) => item.hexagramId)).size).toBe(64);
+      expect(items.every((item) => item.excerpt.length >= 40)).toBe(true);
+    }
+    for (const sourceId of ["source-yichuan-kanripo", "source-benyi-kanripo", "source-zhushu-kanripo"]) {
+      expect(commentarySeed.sources.find((item) => item.id === sourceId)?.revision).toMatch(/^[a-f0-9]{40}$/);
+    }
+  });
   it("通过八卦、六十四卦和知识依赖校验", () => {
     expect(() => validateSeedContent()).not.toThrow();
     expect(HEXAGRAMS.every((hexagram) => hexagram.unicodeSymbol.length > 0)).toBe(true);
@@ -108,6 +128,21 @@ describe("首批内容完整性", () => {
       expect(source.copyrightNote).toBeTruthy();
     }
     expect(SOURCE_REGISTRY.filter((source) => source.status === "needs-review").length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("首批名家解读按卦归档且可追溯来源", () => {
+    expect(commentarySeed.version).toBe(2);
+    expect(new Set(commentarySeed.commentaries.map((item) => item.id)).size).toBe(commentarySeed.commentaries.length);
+    expect(new Set(commentarySeed.sources.map((source) => source.id)).size).toBe(commentarySeed.sources.length);
+    const sourceIds = new Set(commentarySeed.sources.map((source) => source.id));
+    expect(commentarySeed.commentaries.every((item) => sourceIds.has(item.sourceId))).toBe(true);
+    expect(commentarySeed.commentaries.every((item) => item.summary.length >= 50 && item.practicalHint.length >= 20 && item.locator.length > 0)).toBe(true);
+    for (const hexagramId of ["hexagram-01", "hexagram-02", "hexagram-63", "hexagram-64"]) {
+      const items = commentarySeed.commentaries.filter((item) => item.hexagramId === hexagramId);
+      expect(items.length).toBeGreaterThanOrEqual(4);
+      expect(new Set(items.map((item) => item.commentator)).size).toBeGreaterThanOrEqual(4);
+    }
+    expect(commentarySeed.sources.every((source) => SOURCE_REGISTRY.some((registered) => registered.id === source.id))).toBe(true);
   });
 
   it("来源登记交接表可以严格回载且不接受重复或未知字段", () => {
@@ -319,8 +354,8 @@ describe("首批内容完整性", () => {
     expect(EXERCISES.filter((exercise) => exercise.targetId === "heavenly-stems" && exercise.mode !== "review")).toHaveLength(3);
     expect(EXERCISES.filter((exercise) => exercise.targetId === "earthly-branches" && exercise.mode !== "review")).toHaveLength(3);
     const classicKinds = new Set(["hexagram-judgment", "hexagram-line-meaning", "hexagram-guess"]);
-    expect(EXERCISES.filter((exercise) => exercise.mode === "review" && !classicKinds.has(exercise.kind))).toHaveLength(137);
-    expect(EXERCISES.filter((exercise) => exercise.mode === "review")).toHaveLength(649);
+    expect(EXERCISES.filter((exercise) => exercise.mode === "review" && !classicKinds.has(exercise.kind))).toHaveLength(143);
+    expect(EXERCISES.filter((exercise) => exercise.mode === "review")).toHaveLength(655);
   });
 
   it("干支关系按五合、六合、六冲分层且数量固定", () => {

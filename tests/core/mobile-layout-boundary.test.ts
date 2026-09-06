@@ -91,12 +91,12 @@ describe("移动端布局边界", () => {
     expect(detail.indexOf("上卦 <small>四爻至上爻")).toBeLessThan(detail.indexOf("下卦 <small>初爻至三爻"));
     expect(detail).not.toContain('<div className="structure-table">{hexagram.lines.map');
     expect(detail).toContain('className="plain-translation-label">白话解读');
-    expect(detail).toContain('className="context-note-shortcut line-notes"');
+    expect(detail).toContain('<HexagramNotesShortcut hexagramId={hexagram.id} />');
     expect(styles).toContain(".hexagram-reading-layout {\n  display: grid;");
     expect(styles).toContain(".hexagram-reading-card .hexagram-classic-sections {\n  grid-template-columns: 1fr;");
     expect(styles).toContain("@media (min-width: 901px) {\n  .hexagram-reading-layout > .hexagram-classic-sections {");
     expect(styles).toContain(".hexagram-classic-sections {\n  display: grid;");
-    expect(styles).toContain(".context-note-shortcut > summary {");
+    expect(styles).toContain(".hexagram-notes-dialog {");
   });
 
   it("工具集合在手机上收紧为双列卡片", () => {

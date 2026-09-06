@@ -8,7 +8,7 @@ import { TodayLabel } from "@/components/dashboard/TodayLabel";
 import { ResponsiveMenu, type ResponsiveMenuItem } from "@/components/navigation/ResponsiveMenu";
 import { ProfileChip } from "@/components/account/ProfileChip";
 
-const navItems = [{ href: "#today", label: "今日" }, { href: "/test-academy", label: "测试学堂" }, { href: "/divination", label: "算卦" }, { href: "/lab/hexagram", label: "卦象实验室" }, { href: "/hexagrams", label: "卦库" }, { href: "/review", label: "复习" }, { href: "/notes", label: "笔记" }, { href: "/tools", label: "工具" }, { href: "/settings/data", label: "设置" }] as const satisfies readonly ResponsiveMenuItem[];
+const navItems = [{ href: "#today", label: "今日" }, { href: "/test-academy", label: "测试学堂" }, { href: "/divination", label: "算卦" }, { href: "/lab/hexagram", label: "卦象实验室" }, { href: "/hexagrams", label: "卦库" }, { href: "/library", label: "知识库" }, { href: "/review", label: "复习" }, { href: "/notes", label: "笔记" }, { href: "/tools", label: "工具" }, { href: "/settings/data", label: "设置" }] as const satisfies readonly ResponsiveMenuItem[];
 
 export default function Home() {
   return (
@@ -26,7 +26,7 @@ export default function Home() {
         </section>
         <TodayTasks />
         <section className="section-block home-academy" id="academy"><div className="section-heading"><div><p className="eyebrow">测试学堂 · 统一入口</p><h2>需要答题时，从这里开始。</h2></div><Link className="link-arrow" href="/test-academy">进入测试学堂 <span>→</span></Link></div><div className="home-academy-entry"><span>认卦、认爻、卦辞、爻辞和工具知识统一在测试学堂练习。</span><Link className="outline-button" href="/test-academy">打开测试学堂 <span>↗</span></Link></div></section>
-        <section className="quick-tools"><div className="section-heading"><div><p className="eyebrow">快速工具</p><h2>把抽象关系放到眼前</h2></div></div><div className="tool-grid"><Link href="/tools/five-elements" className="tool-card element-tool"><div className="tool-icon">◌</div><div><h3>五行生克</h3><p>点击一个元素，看看它生谁、克谁。</p></div><span>↗</span><div className="element-rings">{FIVE_ELEMENTS.map((element) => <i key={element.id} style={{ backgroundColor: element.color }} />)}</div></Link><Link href="/hexagrams" className="tool-card hex-tool"><div className="tool-icon">䷀</div><div><h3>六十四卦</h3><p>按卦序浏览结构，建立整体地图。</p></div><span>↗</span><strong>{HEXAGRAMS.length}<small> 卦</small></strong></Link></div></section>
+        <section className="quick-tools"><div className="section-heading"><div><p className="eyebrow">快速工具</p><h2>把抽象关系放到眼前</h2></div></div><div className="tool-grid"><Link href="/tools/five-elements" className="tool-card element-tool"><div className="tool-icon">◌</div><div><h3>五行生克</h3><p>点击一个元素，看看它生谁、克谁。</p></div><span>↗</span><div className="element-rings">{FIVE_ELEMENTS.map((element) => <i key={element.id} style={{ backgroundColor: element.color }} />)}</div></Link><Link href="/hexagrams" className="tool-card hex-tool"><div className="tool-icon">䷀</div><div><h3>六十四卦</h3><p>按卦序浏览结构，建立整体地图。</p></div><span>↗</span><strong>{HEXAGRAMS.length}<small> 卦</small></strong></Link><Link href="/library" className="tool-card library-tool"><div className="tool-icon">典</div><div><h3>易学知识库</h3><p>统一检索经传原文、历代解读和来源。</p></div><span>↗</span><strong>578<small> 段</small></strong></Link></div></section>
         <DeferredHexagramLab />
         <footer className="page-footer"><span>易境 · 个人易学学习工具</span><span>结构先于断语 · 学习重于预测</span></footer>
       </main>

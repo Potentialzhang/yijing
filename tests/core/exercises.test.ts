@@ -21,14 +21,14 @@ describe("练习题种子数据", () => {
   it("六十四卦组合题始终提供三个有效卦名选项", () => {
     const pairExercises = EXERCISES.filter((exercise) => exercise.kind === "hexagram-pair");
     expect(pairExercises).toHaveLength(64);
-    expect(pairExercises.every((exercise) => exercise.choices.length === 3 && exercise.choices.includes(exercise.answer))).toBe(true);
+    expect(pairExercises.every((exercise) => exercise.choices.length === 4 && exercise.choices.includes(exercise.answer))).toBe(true);
   });
 
   it("所有选择题选项互不重复，除二选一题外至少提供三个选项", () => {
     const binaryKinds = new Set(["trigram-arrange-lines", "stem-yinyang"]);
     expect(EXERCISES.every((exercise) => new Set(exercise.choices).size === exercise.choices.length)).toBe(true);
     expect(EXERCISES.every((exercise) => exercise.responseType === "text" || binaryKinds.has(exercise.kind) || exercise.choices.length >= 3)).toBe(true);
-    expect(EXERCISES.filter((exercise) => exercise.kind === "palace-trigram").every((exercise) => exercise.choices.length === 3)).toBe(true);
+    expect(EXERCISES.filter((exercise) => exercise.kind === "palace-trigram").every((exercise) => exercise.choices.length === 4)).toBe(true);
   });
 
   it("测试学堂覆盖六十四卦卦辞、三百八十四爻辞和猜卦填空", () => {

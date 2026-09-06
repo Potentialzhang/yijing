@@ -3,7 +3,7 @@ import type { BackupData } from "@/core/data/backup";
 import type { SourceTemplate } from "@/core/notes/source-template";
 
 /** Version of the server-side schema. Browser storage has no schema anymore. */
-export const DATABASE_VERSION = 4 as const;
+export const DATABASE_VERSION = 7 as const;
 
 export interface UserNote { id: string; targetType: "concept" | "trigram" | "hexagram" | "hexagram_line" | "session"; targetId: string; title?: string; markdown: string; tags: string[]; sourceRefs: UserSourceRef[]; createdAt: string; updatedAt: string; deletedAt?: string; }
 export type SourceKind = "classic" | "book" | "video" | "web" | "personal";

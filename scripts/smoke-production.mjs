@@ -54,6 +54,8 @@ const routes = [
   { path: "/learn/yin-yang-lines", status: 200 },
   { path: "/lab/hexagram", status: 200 },
   { path: "/hexagrams", status: 200 },
+  { path: "/library", status: 200 },
+  { path: "/library?q=%E4%BA%A2%E9%BE%99%E6%9C%89%E6%82%94", status: 200 },
   { path: "/hexagrams/1", status: 200 },
   { path: "/trigrams", status: 200 },
   { path: "/trigrams/qian", status: 200 },
@@ -161,8 +163,14 @@ async function assertRoutes(deadline) {
     }
     if (route.path === "/sw.js") {
       const serviceWorker = await response.text();
-      if (!serviceWorker.includes("yijing-static-v64")) {
-        throw new Error("Service Worker 缓存版本不是 yijing-static-v64");
+      if (!serviceWorker.includes("yijing-static-v67")) {
+        throw new Error("Service Worker 缓存版本不是 yijing-static-v67");
+      }
+    }
+    if (route.path.startsWith("/library?")) {
+      const library = await response.text();
+      if (!library.includes("亢龍有悔") || !library.includes("/hexagrams/1#line-6")) {
+        throw new Error("知识库简繁检索未返回可定位的乾卦结果");
       }
     }
   }
@@ -183,7 +191,7 @@ async function assertRoutes(deadline) {
     healthData.status !== "ok" ||
     healthData.service !== "易境" ||
     healthData.appVersion !== "0.1.0" ||
-      healthData.serviceWorkerCache !== "yijing-static-v64" ||
+      healthData.serviceWorkerCache !== "yijing-static-v67" ||
     healthData.storage !== "postgresql"
   ) {
     throw new Error("/api/health 返回的部署状态摘要不完整或版本不匹配");

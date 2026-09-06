@@ -2,6 +2,12 @@ import Link from "next/link";
 
 const tools = [
   {
+    href: "/library",
+    title: "易学知识库",
+    description: "统一检索卦辞、彖传、象传、六爻与已审校名家解读。",
+    label: "内容库",
+  },
+  {
     href: "/tools/five-elements",
     title: "五行生克",
     description: "切换相生、相克和同时显示，查看关系方向。",

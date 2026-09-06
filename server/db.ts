@@ -44,6 +44,76 @@ export async function migrateDatabase(): Promise<void> {
           ALTER TABLE users ADD COLUMN IF NOT EXISTS is_disabled boolean NOT NULL DEFAULT false;
           CREATE INDEX IF NOT EXISTS users_admin_idx ON users(is_admin, is_disabled);
           UPDATE users SET is_admin = true WHERE id = (SELECT id FROM users ORDER BY created_at, id LIMIT 1) AND NOT EXISTS (SELECT 1 FROM users WHERE is_admin = true);`,
+      5: `CREATE TABLE IF NOT EXISTS content_sources (
+            id text PRIMARY KEY,
+            kind text NOT NULL,
+            title text NOT NULL,
+            author text,
+            dynasty text,
+            edition text,
+            url text,
+            license_label text NOT NULL,
+            rights_note text NOT NULL,
+            revision text,
+            retrieved_at date,
+            review_status text NOT NULL DEFAULT 'pending',
+            updated_at timestamptz NOT NULL DEFAULT now()
+          );
+          CREATE TABLE IF NOT EXISTS content_passages (
+            id text PRIMARY KEY,
+            hexagram_id text NOT NULL,
+            line_position smallint CHECK (line_position BETWEEN 1 AND 6),
+            section_kind text NOT NULL,
+            original_text text NOT NULL,
+            source_id text NOT NULL REFERENCES content_sources(id),
+            locator text NOT NULL,
+            source_sha256 text,
+            review_status text NOT NULL DEFAULT 'pending',
+            content_version integer NOT NULL DEFAULT 1,
+            updated_at timestamptz NOT NULL DEFAULT now()
+          );
+          CREATE INDEX IF NOT EXISTS content_passages_hexagram_idx ON content_passages(hexagram_id, section_kind, line_position);
+          CREATE TABLE IF NOT EXISTS content_commentaries (
+            id text PRIMARY KEY,
+            hexagram_id text NOT NULL,
+            line_position smallint CHECK (line_position BETWEEN 1 AND 6),
+            source_id text NOT NULL REFERENCES content_sources(id),
+            commentator text NOT NULL,
+            dynasty text NOT NULL,
+            tradition text NOT NULL,
+            focus text NOT NULL,
+            excerpt text NOT NULL,
+            summary text NOT NULL,
+            practical_hint text NOT NULL,
+            locator text NOT NULL,
+            display_order integer NOT NULL DEFAULT 0,
+            review_status text NOT NULL DEFAULT 'draft',
+            content_version integer NOT NULL DEFAULT 1,
+            updated_at timestamptz NOT NULL DEFAULT now()
+          );
+          CREATE INDEX IF NOT EXISTS content_commentaries_hexagram_idx ON content_commentaries(hexagram_id, line_position, display_order);`,
+      6: `ALTER TABLE ai_generations ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'completed';
+          ALTER TABLE ai_generations ADD COLUMN IF NOT EXISTS provider text;
+          ALTER TABLE ai_generations ADD COLUMN IF NOT EXISTS model text;
+          ALTER TABLE ai_generations ADD COLUMN IF NOT EXISTS error_message text;
+          ALTER TABLE ai_generations ALTER COLUMN output_text SET DEFAULT '';
+          CREATE INDEX IF NOT EXISTS ai_generations_user_created_idx ON ai_generations(user_id,created_at DESC);
+          CREATE INDEX IF NOT EXISTS ai_generations_user_status_idx ON ai_generations(user_id,status,created_at DESC);`,
+      7: `CREATE TABLE IF NOT EXISTS content_entries (
+            id text PRIMARY KEY,
+            category text NOT NULL,
+            title text NOT NULL,
+            summary text NOT NULL,
+            keywords jsonb NOT NULL DEFAULT '[]',
+            payload jsonb NOT NULL DEFAULT '{}',
+            source_ids jsonb NOT NULL DEFAULT '[]',
+            target_href text,
+            review_status text NOT NULL DEFAULT 'reviewed',
+            content_version integer NOT NULL DEFAULT 1,
+            updated_at timestamptz NOT NULL DEFAULT now()
+          );
+          CREATE INDEX IF NOT EXISTS content_entries_category_idx ON content_entries(category,title);
+          CREATE INDEX IF NOT EXISTS content_entries_review_idx ON content_entries(review_status,updated_at DESC);`,
     };
     const applied = await client.query<{ version: number }>("SELECT version FROM schema_migrations");
     const done = new Set(applied.rows.map(row => row.version));

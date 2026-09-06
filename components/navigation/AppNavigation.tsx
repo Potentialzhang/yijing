@@ -11,6 +11,7 @@ const items = [
   { href: "/divination", label: "算卦" },
   { href: "/lab/hexagram", label: "卦象实验室" },
   { href: "/hexagrams", label: "六十四卦" },
+  { href: "/library", label: "知识库" },
   { href: "/review", label: "复习" },
   { href: "/notes", label: "笔记" },
   { href: "/tools", label: "工具" },

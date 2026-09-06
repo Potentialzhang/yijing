@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { buildAiRequestPreview } from "@/core/ai/consent";
 import { selectedContentData, validateStudyRequest } from "@/core/ai/materials";
 import { generateStudyDraft, readOpenAiConfiguration } from "@/core/ai/openai";
-import { GET, POST } from "@/app/api/ai/study/route";
+import { GET, handleStudyPost } from "@/app/api/ai/study/route";
 
 const request = () => ({ kind: "exercise-draft", preview: buildAiRequestPreview("study-draft", ["selected-content"]), selectedData: selectedContentData(["hexagram-01"]), userConfirmed: true });
 const config = { apiKey: "test-secret-not-real", model: "test-model", baseUrl: "https://api.openai.com/v1" };
@@ -56,21 +56,26 @@ describe("真实 Responses 适配器", () => {
 
 describe("AI HTTP 边界", () => {
   const makeRequest = (origin = "http://localhost:3000", data: unknown = request()) => new Request("http://localhost:3000/api/ai/study", { method: "POST", headers: { origin, "Content-Type": "application/json" }, body: JSON.stringify(data) });
+  const authenticated = {
+    resolveUser: async () => ({ id: "user-1", email: "test@example.com", display_name: "测试", is_admin: false, is_disabled: false }),
+    query: async (sql: string) => ({ rows: sql.startsWith("SELECT count") ? [{ count: "0" }] : [] }),
+  };
   it("配置查询不泄露密钥，无配置时明确报错", async () => {
     vi.stubEnv("OPENAI_API_KEY", ""); vi.stubEnv("OPENAI_MODEL", "");
     expect(await (await GET()).json()).toMatchObject({ configured: false });
-    expect((await POST(makeRequest())).status).toBe(503);
+    expect((await handleStudyPost(makeRequest(), { ...authenticated, resolveUser: async () => null })).status).toBe(401);
+    expect((await handleStudyPost(makeRequest(), authenticated)).status).toBe(503);
     vi.stubEnv("OPENAI_API_KEY", config.apiKey); vi.stubEnv("OPENAI_MODEL", config.model);
     expect(JSON.stringify(await (await GET()).json())).not.toContain(config.apiKey);
   });
   it("拒绝跨站请求和未确认材料", async () => {
-    expect((await POST(makeRequest("https://other.test"))).status).toBe(403);
-    expect((await POST(makeRequest("http://localhost:3000", { ...request(), userConfirmed: false }))).status).toBe(400);
+    expect((await handleStudyPost(makeRequest("https://other.test"), authenticated)).status).toBe(403);
+    expect((await handleStudyPost(makeRequest("http://localhost:3000", { ...request(), userConfirmed: false }), authenticated)).status).toBe(400);
   });
   it("路由贯通到 Responses 请求，私有结果禁止缓存", async () => {
     vi.stubEnv("OPENAI_API_KEY", config.apiKey); vi.stubEnv("OPENAI_MODEL", config.model);
     vi.stubGlobal("fetch", vi.fn(async () => response()));
-    const result = await POST(makeRequest());
+    const result = await handleStudyPost(makeRequest(), authenticated);
     expect(result.status).toBe(200); expect(result.headers.get("cache-control")).toBe("no-store");
     expect((await result.json()).questions).toHaveLength(3);
   });

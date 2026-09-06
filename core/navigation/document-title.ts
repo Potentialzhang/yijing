@@ -3,6 +3,7 @@ const EXACT_TITLES: Record<string, string> = {
   "/learn": "学习地图",
   "/lab/hexagram": "卦象实验室",
   "/hexagrams": "六十四卦索引",
+  "/library": "易学知识库",
   "/trigrams": "八卦卡片",
   "/review": "复习中心",
   "/review/session": "复习会话",

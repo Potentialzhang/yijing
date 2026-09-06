@@ -7,7 +7,7 @@ import { EARTHLY_BRANCHES, HEAVENLY_STEMS } from "./sexagenary";
 import { HETU_GROUPS, NINE_PALACES } from "./hetu-luoshu";
 import { SEXAGENARY_RELATIONS } from "./sexagenary-relations";
 
-export type ExerciseKind = "concept-recall" | "trigram-name" | "trigram-lines" | "trigram-lines-name" | "trigram-name-lines" | "trigram-arrange-lines" | "trigram-element" | "trigram-direction" | "trigram-direction-name" | "trigram-nature" | "trigram-nature-name" | "trigram-family" | "trigram-body" | "five-generates" | "five-controls" | "hexagram-pair" | "hexagram-judgment" | "hexagram-line" | "hexagram-line-meaning" | "hexagram-guess" | "stem-element" | "stem-yinyang" | "stem-name" | "branch-element" | "branch-direction" | "branch-hour" | "branch-name" | "hetu-direction" | "hetu-element" | "hetu-numbers" | "palace-direction" | "palace-number" | "palace-trigram" | "sexagenary-relation";
+export type ExerciseKind = "concept-recall" | "line-position" | "trigram-name" | "trigram-lines" | "trigram-lines-name" | "trigram-name-lines" | "trigram-arrange-lines" | "trigram-element" | "trigram-direction" | "trigram-direction-name" | "trigram-nature" | "trigram-nature-name" | "trigram-family" | "trigram-body" | "five-generates" | "five-controls" | "hexagram-pair" | "hexagram-judgment" | "hexagram-line" | "hexagram-line-meaning" | "hexagram-guess" | "stem-element" | "stem-yinyang" | "stem-name" | "branch-element" | "branch-direction" | "branch-hour" | "branch-name" | "hetu-direction" | "hetu-element" | "hetu-numbers" | "palace-direction" | "palace-number" | "palace-trigram" | "sexagenary-relation";
 export type ExerciseResponseType = "choice" | "text";
 
 export interface Exercise {
@@ -50,7 +50,7 @@ const judgmentRecords = HEXAGRAMS.map((hexagram) => ({ hexagram, judgment: getHe
 const lineRecords = HEXAGRAMS.flatMap((hexagram) => getHexagramLineTexts(hexagram.id).map((line) => ({ hexagram, line })));
 const lineMeanings = lineRecords.map(({ line }) => line.blocks[0]?.markdown ?? "");
 
-function choices(answer: string, pool: readonly string[], offsets: number[] = [1, 3]): string[] {
+function choices(answer: string, pool: readonly string[], offsets: number[] = [1, 3, 5]): string[] {
   // Some source fields are intentionally repeated (for example, the central
   // palace also points to Kun).  Build the distractors from a de-duplicated
   // pool, then keep walking when an offset lands back on the answer so a
@@ -66,7 +66,7 @@ function choices(answer: string, pool: readonly string[], offsets: number[] = [1
 
   if (answerIndex >= 0) {
     offsets.forEach((offset) => addCandidate(uniquePool[(answerIndex + offset) % uniquePool.length]));
-    for (let offset = 1; values.length < Math.min(3, uniquePool.length); offset += 1) {
+    for (let offset = 1; values.length < Math.min(4, uniquePool.length); offset += 1) {
       addCandidate(uniquePool[(answerIndex + offset) % uniquePool.length]);
     }
   } else {
@@ -81,6 +81,7 @@ function lineDescription(lines: readonly (0 | 1)[]) {
 }
 
 export const EXERCISES: readonly Exercise[] = [
+  ...["初爻", "二爻", "三爻", "四爻", "五爻", "上爻"].map((name, index, names) => ({ id: `line-position-${index + 1}`, kind: "line-position" as const, mode: "review" as const, prompt: "卦象中高亮的是哪一爻？", targetType: "concept" as const, targetId: "line-positions", display: `line-position:${index + 1}`, choices: choices(name, names), answer: name, explanation: `六爻从下往上数：初、二、三、四、五、上；高亮位置是${name}。` })),
   ...TRIGRAMS.map((trigram) => ({ id: `trigram-name-${trigram.id}`, kind: "trigram-name" as const, prompt: "看卦符，选择卦名", targetType: "trigram" as const, targetId: trigram.id, display: trigram.symbol, choices: choices(trigram.name, trigramNames), answer: trigram.name, explanation: `${trigram.name}的三爻结构为${lineDescription(trigram.lines)}，基本自然象为${trigram.nature}。` })),
   ...TRIGRAMS.map((trigram) => ({ id: `trigram-lines-${trigram.id}`, kind: "trigram-lines" as const, prompt: `${trigram.name}的三爻结构是什么？`, targetType: "trigram" as const, targetId: trigram.id, display: trigram.name, choices: choices(trigram.lines.join(""), TRIGRAMS.map((item) => item.lines.join(""))), answer: trigram.lines.join(""), explanation: `${trigram.name}的正确结构是${lineDescription(trigram.lines)}。` })),
   ...TRIGRAMS.map((trigram) => ({ id: `trigram-lines-name-${trigram.id}`, kind: "trigram-lines-name" as const, prompt: "看三爻结构，选择卦名", targetType: "trigram" as const, targetId: trigram.id, display: trigram.lines.join(""), choices: choices(trigram.name, trigramNames), answer: trigram.name, explanation: `${trigram.name}的三爻结构是${lineDescription(trigram.lines)}。` })),

@@ -13,6 +13,7 @@ describe("共享导航路由匹配", () => {
     expect(isNavigationItemCurrent("/settings-other", "/settings/data")).toBe(false);
     expect(isNavigationItemCurrent("/tools/compass", "/tools")).toBe(true);
     expect(isNavigationItemCurrent("/hexagrams/1", "/hexagrams")).toBe(true);
+    expect(isNavigationItemCurrent("/library", "/library")).toBe(true);
     expect(isNavigationItemCurrent("/learn", "/")).toBe(false);
   });
 });

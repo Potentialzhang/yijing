@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { AIAssistSettings } from "@/components/settings/AIAssistSettings";
+import { AIGenerationHistory } from "@/components/settings/AIGenerationHistory";
+import { currentUser } from "@/server/auth";
+import { getAiGenerationHistory } from "@/server/ai-history";
 
-export default function AIAssistPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AIAssistPage() {
+  const user = await currentUser();
+  const history = user ? await getAiGenerationHistory(user.id) : [];
   return (
     <main className="subpage">
       <header className="subpage-header">
@@ -16,6 +23,7 @@ export default function AIAssistPage() {
         </p>
       </header>
       <AIAssistSettings />
+      <AIGenerationHistory items={history} />
       <section className="pending-content">
         <span className="content-label">AI 辅学 · 授权说明</span>
         <h2>授权、来源和原文保持分层。</h2>

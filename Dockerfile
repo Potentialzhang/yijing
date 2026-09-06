@@ -22,6 +22,8 @@ RUN addgroup --system --gid 1001 nodejs \
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/scripts/migrate.mjs ./scripts/migrate.mjs
+COPY --from=builder /app/content/commentary-seed.json ./content/commentary-seed.json
+COPY --from=builder /app/content/zhouyi-canonical.json ./content/zhouyi-canonical.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 

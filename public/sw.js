@@ -1,9 +1,10 @@
-const CACHE_NAME = "yijing-static-v64";
+const CACHE_NAME = "yijing-static-v67";
 const CORE_ROUTES = [
   "/",
   "/learn",
   "/trigrams",
   "/hexagrams",
+  "/library",
   "/lab/hexagram",
   "/review",
   "/review/session",
@@ -112,6 +113,10 @@ function cacheSuccessfulResponse(request, response, { navigation = false } = {})
   // A user can open arbitrary URLs (including links with personal query
   // parameters), but those must not grow the offline cache indefinitely.
   if (navigation && !CORE_ROUTE_SET.has(url.pathname)) return Promise.resolve();
+  // Search/share parameters are restored by the page after a pathname shell
+  // is loaded. Never let a parameterized response replace that clean shell;
+  // this is especially important for database-backed library searches.
+  if (navigation && url.search) return Promise.resolve();
   // Store one canonical pathname entry instead of one entry per query string.
   // Client-side pages restore their allow-listed query parameters after the
   // pathname fallback is served, so share links remain usable offline.

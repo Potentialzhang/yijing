@@ -23,7 +23,7 @@ type AcademyMode = {
 
 const MODE_KINDS = {
   "recognize-hexagram": ["hexagram-pair"] as const,
-  "recognize-line": ["trigram-lines-name", "trigram-arrange-lines", "hexagram-line"] as const,
+  "recognize-line": ["line-position", "trigram-lines-name", "trigram-arrange-lines", "hexagram-line"] as const,
   judgment: ["hexagram-judgment"] as const,
   "line-meaning": ["hexagram-line-meaning"] as const,
   trigram: ["trigram-name", "trigram-lines", "trigram-lines-name", "trigram-name-lines", "trigram-arrange-lines", "trigram-element", "trigram-direction", "trigram-direction-name", "trigram-nature", "trigram-nature-name", "trigram-family", "trigram-body"] as const,
@@ -58,6 +58,10 @@ function QuestionDisplay({ exercise }: { exercise: Exercise }) {
   const hexagram = exercise.targetType === "hexagram" ? HEXAGRAMS.find((item) => item.id === exercise.targetId) : undefined;
   if (hexagram && ["hexagram-pair", "hexagram-guess"].includes(exercise.kind)) return <HexagramGlyph lines={hexagram.lines} label={`${hexagram.name}六爻卦象`} />;
   if (isTrigramSignature(exercise.display)) return <TrigramSignatureVisual value={exercise.display} />;
+  if (exercise.display.startsWith("line-position:")) {
+    const activePosition = Number(exercise.display.split(":")[1]);
+    return <div className="line-position-visual" aria-label={`高亮第 ${activePosition} 爻`}>{[6, 5, 4, 3, 2, 1].map((position) => <span className={position === activePosition ? "is-active" : ""} key={position}><i /><small>{position === activePosition ? "◀" : ""}</small></span>)}</div>;
+  }
   return <span>{exercise.display}</span>;
 }
 
