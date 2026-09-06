@@ -83,6 +83,8 @@ describe("移动端布局边界", () => {
 
   it("卦详情先读经典卦文，摘要和上下文笔记保持紧凑", () => {
     const detail = readFileSync(join(process.cwd(), "app/hexagrams/[number]/page.tsx"), "utf8");
+    expect(detail).toContain('className="hexagram-reading-card"');
+    expect(detail).toContain('aria-label="卦象、卦象摘要与经典卦文"');
     expect(detail).toContain('className="hexagram-classic-sections"');
     expect(detail.indexOf('className="hexagram-classic-sections"')).toBeLessThan(detail.indexOf('className="detail-hero"'));
     expect(detail).not.toContain('<div className="structure-table">{hexagram.lines.map');

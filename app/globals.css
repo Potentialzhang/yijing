@@ -8047,6 +8047,25 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 /* Put the three core passages before the visual summary so the reading starts
    with the text people came for. The cards stay compact on wide screens and
    become a single readable column on phones. */
+.hexagram-reading-card {
+  margin-top: 22px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.hexagram-reading-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 4px 10px;
+}
+.hexagram-reading-card-header small {
+  color: var(--muted);
+  font-size: 10px;
+}
 .hexagram-classic-sections {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -8087,6 +8106,15 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 }
 .hexagram-detail-page .hexagram-study-sections .study-feature-wide {
   grid-column: auto;
+}
+.hexagram-reading-card .detail-hero {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.hexagram-reading-card .detail-visual,
+.hexagram-reading-card .detail-copy {
+  box-shadow: none;
 }
 .context-note-shortcut {
   margin-top: 18px;
@@ -8133,6 +8161,14 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 }
 
 @media (max-width: 760px) {
+  .hexagram-reading-card {
+    margin-top: 16px;
+    padding: 8px;
+    border-radius: 14px;
+  }
+  .hexagram-reading-card-header {
+    padding: 1px 3px 8px;
+  }
   .hexagram-classic-sections {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -8152,7 +8188,8 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     grid-template-columns: 1fr;
   }
   .hexagram-detail-page .detail-hero {
-    margin-top: 16px;
+    margin-top: 10px;
+    padding-top: 10px;
   }
   .context-note-shortcut {
     margin-top: 14px;
