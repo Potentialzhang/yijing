@@ -505,7 +505,7 @@ test.describe("易境核心学习流程", () => {
     const serviceWorker = await request.get("/sw.js");
     expect(serviceWorker.ok()).toBe(true);
     const serviceWorkerText = await serviceWorker.text();
-    expect(serviceWorkerText).toContain("yijing-static-v69");
+    expect(serviceWorkerText).toContain("yijing-static-v70");
     expect(serviceWorkerText).toContain("function precacheCoreRoutes");
     expect(serviceWorkerText).toContain("A single temporarily unavailable route");
     expect(serviceWorkerText).toContain("function matchCachedRequest");
@@ -520,7 +520,7 @@ test.describe("易境核心学习流程", () => {
       status: "ok",
       service: "易境",
       appVersion: "0.1.0",
-      serviceWorkerCache: "yijing-static-v69",
+      serviceWorkerCache: "yijing-static-v70",
       storage: "postgresql",
     });
     for (const conceptId of [
@@ -536,6 +536,7 @@ test.describe("易境核心学习流程", () => {
     for (const route of [
       "/tools/sexagenary-relations",
       "/tools/hetu-luoshu",
+      "/tools/hexagram-sequence",
       "/tools/compass",
       "/settings/content",
     ]) {
@@ -1010,8 +1011,11 @@ test.describe("易境核心学习流程", () => {
     }
   });
 
-  test("六十四卦提供卦序歌且详情不显示学习阶段", async ({ page }) => {
+  test("卦序歌位于独立工具页且六十四卦详情不显示学习阶段", async ({ page }) => {
     await page.goto("/hexagrams");
+    await expect(page.getByRole("region", { name: "上下经卦名次序歌" })).toHaveCount(0);
+
+    await page.goto("/tools/hexagram-sequence");
     const memoryGuide = page.getByRole("region", { name: "上下经卦名次序歌" });
     await expect(memoryGuide).toContainText("乾坤屯蒙需讼师，比小畜兮履泰否");
     await expect(memoryGuide).toContainText("小过既济兼未济，是为下经三十四");
@@ -1898,7 +1902,7 @@ test.describe("易境核心学习流程", () => {
     await expect(
       page.getByRole("heading", { name: "把关系放到眼前。" }),
     ).toBeVisible();
-    await expect(page.locator(".tools-hub-card")).toHaveCount(7);
+    await expect(page.locator(".tools-hub-card")).toHaveCount(9);
     await page.goto("/tools/sexagenary-relations");
     await expect(
       page.getByRole("heading", { name: "先记配对，再谈规则。" }),

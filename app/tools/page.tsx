@@ -20,6 +20,12 @@ const tools = [
     label: "结构卡",
   },
   {
+    href: "/tools/hexagram-sequence",
+    title: "六十四卦卦序歌",
+    description: "按上经、下经分段背诵卦名次序，并用三步记法巩固。",
+    label: "记忆诀",
+  },
+  {
     href: "/tools/sexagenary-relations",
     title: "干支关系",
     description: "分层查看天干五合、地支六合与六冲。",

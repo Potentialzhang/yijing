@@ -67,6 +67,7 @@ const routes = [
   { path: "/api/ai/study", status: 200, contentType: "application/json" },
   { path: "/stats", status: 200 },
   { path: "/tools/trigrams", status: 200 },
+  { path: "/tools/hexagram-sequence", status: 200 },
   { path: "/tools/five-elements", status: 200 },
   { path: "/tools/sexagenary-relations", status: 200 },
   { path: "/tools/hetu-luoshu", status: 200 },
@@ -163,8 +164,8 @@ async function assertRoutes(deadline) {
     }
     if (route.path === "/sw.js") {
       const serviceWorker = await response.text();
-      if (!serviceWorker.includes("yijing-static-v69")) {
-        throw new Error("Service Worker 缓存版本不是 yijing-static-v69");
+      if (!serviceWorker.includes("yijing-static-v70")) {
+        throw new Error("Service Worker 缓存版本不是 yijing-static-v70");
       }
     }
     if (route.path.startsWith("/library?")) {
@@ -191,7 +192,7 @@ async function assertRoutes(deadline) {
     healthData.status !== "ok" ||
     healthData.service !== "易境" ||
     healthData.appVersion !== "0.1.0" ||
-      healthData.serviceWorkerCache !== "yijing-static-v69" ||
+      healthData.serviceWorkerCache !== "yijing-static-v70" ||
     healthData.storage !== "postgresql"
   ) {
     throw new Error("/api/health 返回的部署状态摘要不完整或版本不匹配");

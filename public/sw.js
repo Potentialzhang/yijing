@@ -1,4 +1,4 @@
-const CACHE_NAME = "yijing-static-v69";
+const CACHE_NAME = "yijing-static-v70";
 const CORE_ROUTES = [
   "/",
   "/learn",
@@ -37,6 +37,7 @@ const CORE_ROUTES = [
   "/tools",
   "/tools/five-elements",
   "/tools/trigrams",
+  "/tools/hexagram-sequence",
   "/settings/data",
   "/settings/content",
   "/settings/preferences",

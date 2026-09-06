@@ -15,6 +15,7 @@ const EXACT_TITLES: Record<string, string> = {
   "/tools": "工具集合",
   "/tools/five-elements": "五行生克",
   "/tools/trigrams": "八卦工具",
+  "/tools/hexagram-sequence": "六十四卦卦序歌",
   "/tools/sexagenary-relations": "干支关系",
   "/tools/hetu-luoshu": "河图洛书与九宫",
   "/tools/calendar": "干支与节气",

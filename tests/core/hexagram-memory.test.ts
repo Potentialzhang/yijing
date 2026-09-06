@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   HEXAGRAM_SEQUENCE_MEMORY_TIPS,
@@ -25,5 +27,14 @@ describe("六十四卦卦序记忆内容", () => {
     expect(verse).toContain("咸恒遁兮及大壮");
     expect(verse).toContain("小过既济兼未济，是为下经三十四");
     expect(HEXAGRAM_SEQUENCE_MEMORY_TIPS).toHaveLength(3);
+  });
+
+  it("口诀只出现在独立工具页，不占用六十四卦索引", () => {
+    const hexagramIndexPage = readFileSync(join(process.cwd(), "app/hexagrams/page.tsx"), "utf8");
+    const toolPage = readFileSync(join(process.cwd(), "app/tools/hexagram-sequence/page.tsx"), "utf8");
+    const toolsIndex = readFileSync(join(process.cwd(), "app/tools/page.tsx"), "utf8");
+    expect(hexagramIndexPage).not.toContain("HexagramMemoryGuide");
+    expect(toolPage).toContain("<HexagramMemoryGuide />");
+    expect(toolsIndex).toContain('href: "/tools/hexagram-sequence"');
   });
 });

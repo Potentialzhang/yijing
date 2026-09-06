@@ -29,6 +29,10 @@ test("手机、平板和桌面宽度无横向溢出并保留核心操作", async
       marker: page.getByRole("heading", { name: "先认出卦，再扩展象意。" }),
     },
     {
+      path: "/tools/hexagram-sequence",
+      marker: page.getByRole("heading", { name: "上下经卦名次序歌" }),
+    },
+    {
       path: "/tools/hetu-luoshu",
       marker: page.getByRole("tab", { name: "河图" }),
     },

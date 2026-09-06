@@ -32,6 +32,7 @@ const routes = [
   "/self-test",
   "/tools/five-elements",
   "/tools/trigrams",
+  "/tools/hexagram-sequence",
   "/tools",
   "/tools/sexagenary-relations",
   "/tools/hetu-luoshu",
