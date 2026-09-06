@@ -1511,13 +1511,6 @@ a {
   color: var(--muted);
   font-size: 9px;
 }
-.index-arrow {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  color: #b7aca3;
-  font-size: 16px;
-}
 .detail-hero {
   display: grid;
   grid-template-columns: 260px 1fr;
@@ -7420,17 +7413,10 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 .hexagram-index-card .line-part { height: 6px; }
 .hexagram-index-card .line-gap { width: 10px; flex-basis: 10px; }
 .hexagram-index-card .line-position { display: none; }
-.hex-index-trigrams { display: grid; gap: 5px; align-items: center; }
-.hex-index-trigrams .trigram-glyph { width: 32px; gap: 2px; }
-.hex-index-trigrams .trigram-line { height: 5px; }
-.hex-index-trigrams .line-glyph { width: 30px; min-height: 5px; }
-.hex-index-trigrams .line-part { height: 4px; }
-.hex-index-trigrams .line-gap { width: 5px; flex-basis: 5px; }
 .hex-index-copy { display: grid; gap: 3px; min-width: 0; }
 .hex-index-copy strong { font-size: 18px; font-weight: 600; }
 .hex-index-copy small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; }
 .hex-index-copy .index-status { color: var(--accent); }
-.hexagram-index-card .index-arrow { top: 10px; right: 10px; }
 .hexagram-detail-page .detail-copy h2 { margin-top: 8px; }
 .trigram-inline { display: flex; align-items: center; gap: 8px; }
 .trigram-inline .trigram-glyph { width: 40px; gap: 2px; }
@@ -7706,27 +7692,6 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   width: 7px;
   flex-basis: 7px;
 }
-.hex-index-trigrams {
-  gap: 3px;
-}
-.hex-index-trigrams .trigram-glyph {
-  width: 19px;
-  gap: 2px;
-}
-.hex-index-trigrams .trigram-line {
-  height: 4px;
-}
-.hex-index-trigrams .line-glyph {
-  width: 17px;
-  min-height: 4px;
-}
-.hex-index-trigrams .line-part {
-  height: 3px;
-}
-.hex-index-trigrams .line-gap {
-  width: 4px;
-  flex-basis: 4px;
-}
 .hex-index-copy strong {
   font-size: 15px;
 }
@@ -7779,12 +7744,6 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     width: 6px;
     flex-basis: 6px;
   }
-  .hex-index-trigrams .trigram-glyph {
-    width: 18px;
-  }
-  .hex-index-trigrams .line-glyph {
-    width: 16px;
-  }
   .hex-index-copy strong {
     font-size: 14px;
   }
@@ -7807,12 +7766,6 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   .hexagram-index-card .line-button,
   .hexagram-index-card .line-glyph {
     width: 46px;
-  }
-  .hex-index-trigrams .trigram-glyph {
-    width: 17px;
-  }
-  .hex-index-trigrams .line-glyph {
-    width: 15px;
   }
 }
 
