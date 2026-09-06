@@ -81,6 +81,17 @@ describe("移动端布局边界", () => {
     expect(responsiveIndex).toContain("@media (max-width: 760px) {\n  .hexagram-index {\n    grid-template-columns: repeat(4, minmax(0, 1fr));");
   });
 
+  it("卦详情先读经典卦文，摘要和上下文笔记保持紧凑", () => {
+    const detail = readFileSync(join(process.cwd(), "app/hexagrams/[number]/page.tsx"), "utf8");
+    expect(detail).toContain('className="hexagram-classic-sections"');
+    expect(detail.indexOf('className="hexagram-classic-sections"')).toBeLessThan(detail.indexOf('className="detail-hero"'));
+    expect(detail).not.toContain('<div className="structure-table">{hexagram.lines.map');
+    expect(detail).toContain('className="plain-translation-label">白话解读');
+    expect(detail).toContain('className="context-note-shortcut line-notes"');
+    expect(styles).toContain(".hexagram-classic-sections {\n  display: grid;");
+    expect(styles).toContain(".context-note-shortcut > summary {");
+  });
+
   it("工具集合在手机上收紧为双列卡片", () => {
     const denseTools = styles.slice(styles.lastIndexOf("/* Dense tool and reading layouts"));
     expect(denseTools).toContain(".tools-page .tools-hub-grid {\n  grid-template-columns: repeat(3, minmax(0, 1fr));");

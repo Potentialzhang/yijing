@@ -8043,3 +8043,118 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     grid-column: auto;
   }
 }
+
+/* Put the three core passages before the visual summary so the reading starts
+   with the text people came for. The cards stay compact on wide screens and
+   become a single readable column on phones. */
+.hexagram-classic-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+  align-items: start;
+}
+.hexagram-classic-sections .study-feature-card {
+  padding: 15px;
+  box-shadow: none;
+}
+.hexagram-classic-sections .study-feature-card h2 {
+  margin: 7px 0 6px;
+  font-size: 18px;
+  line-height: 1.4;
+}
+.hexagram-classic-sections .study-feature-card p {
+  font-size: 13px;
+  line-height: 1.65;
+}
+.hexagram-classic-sections .study-feature-card .canonical-passage {
+  margin: 8px 0 0;
+  padding: 9px 10px;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.hexagram-classic-sections .plain-translation-label {
+  margin: 9px 0 3px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+}
+.hexagram-classic-sections .plain-translation {
+  color: var(--ink);
+}
+.hexagram-detail-page .hexagram-study-sections {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.hexagram-detail-page .hexagram-study-sections .study-feature-wide {
+  grid-column: auto;
+}
+.context-note-shortcut {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.context-note-shortcut > summary {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  list-style: none;
+}
+.context-note-shortcut > summary::-webkit-details-marker {
+  display: none;
+}
+.context-note-shortcut > summary small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.context-note-shortcut > summary strong {
+  margin-left: auto;
+  font-size: 18px;
+  font-weight: 400;
+}
+.context-note-shortcut[open] > summary {
+  border-bottom: 1px solid var(--line);
+  background: #fcf4ee;
+}
+.context-note-list {
+  display: grid;
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+.context-note-list .note-entry {
+  margin-top: 8px;
+}
+
+@media (max-width: 760px) {
+  .hexagram-classic-sections {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .hexagram-classic-sections .study-feature-card {
+    padding: 13px;
+  }
+  .hexagram-classic-sections .study-feature-card h2 {
+    font-size: 17px;
+  }
+  .hexagram-classic-sections .study-feature-card p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .hexagram-detail-page .hexagram-study-sections {
+    grid-template-columns: 1fr;
+  }
+  .hexagram-detail-page .detail-hero {
+    margin-top: 16px;
+  }
+  .context-note-shortcut {
+    margin-top: 14px;
+  }
+}
