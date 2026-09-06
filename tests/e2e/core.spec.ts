@@ -505,7 +505,7 @@ test.describe("易境核心学习流程", () => {
     const serviceWorker = await request.get("/sw.js");
     expect(serviceWorker.ok()).toBe(true);
     const serviceWorkerText = await serviceWorker.text();
-    expect(serviceWorkerText).toContain("yijing-static-v68");
+    expect(serviceWorkerText).toContain("yijing-static-v69");
     expect(serviceWorkerText).toContain("function precacheCoreRoutes");
     expect(serviceWorkerText).toContain("A single temporarily unavailable route");
     expect(serviceWorkerText).toContain("function matchCachedRequest");
@@ -520,7 +520,7 @@ test.describe("易境核心学习流程", () => {
       status: "ok",
       service: "易境",
       appVersion: "0.1.0",
-      serviceWorkerCache: "yijing-static-v68",
+      serviceWorkerCache: "yijing-static-v69",
       storage: "postgresql",
     });
     for (const conceptId of [
@@ -992,10 +992,11 @@ test.describe("易境核心学习流程", () => {
     await expect(page.getByRole("link", { name: /水火既济/ })).toBeVisible();
   });
 
-  test("六十四卦索引会同步其他标签页的收藏状态", async ({ page, context }) => {
+  test("六十四卦索引不显示学习阶段并同步其他标签页的收藏状态", async ({ page, context }) => {
     await page.goto("/hexagrams");
     const card = page.getByRole("link", { name: /乾为天/ });
-    await expect(card).toContainText("未开始");
+    await expect(card).not.toContainText("未开始");
+    await expect(card).not.toContainText("已学习");
 
     const detailPage = await context.newPage();
     try {
@@ -1003,112 +1004,21 @@ test.describe("易境核心学习流程", () => {
       await detailPage.getByRole("button", { name: "☆ 收藏" }).click();
       await expect(card).toContainText("★ 已收藏");
       await detailPage.getByRole("button", { name: "★ 已收藏" }).click();
-      await expect(card).toContainText("未开始");
+      await expect(card).not.toContainText("已收藏");
     } finally {
       await detailPage.close();
     }
   });
 
-  test("六十四卦详情会显示并刷新自身学习状态", async ({ page }) => {
+  test("六十四卦提供卦序歌且详情不显示学习阶段", async ({ page }) => {
+    await page.goto("/hexagrams");
+    const memoryGuide = page.getByRole("region", { name: "上下经卦名次序歌" });
+    await expect(memoryGuide).toContainText("乾坤屯蒙需讼师，比小畜兮履泰否");
+    await expect(memoryGuide).toContainText("小过既济兼未济，是为下经三十四");
+    await expect(memoryGuide).toContainText("三步记法");
+
     await page.goto("/hexagrams/1");
-    const status = page.getByLabel(/学习状态：/);
-    await expect(status).toHaveAttribute("aria-label", "学习状态：未开始");
-
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const transaction = db.transaction(["reviewCardStates", "reviewAttempts"], "readwrite");
-          transaction.objectStore("reviewCardStates").put({
-            cardId: "hexagram-pair-qian-qian",
-            targetType: "hexagram",
-            targetId: "hexagram-01",
-            algorithmVersion: 1,
-            stepIndex: 0,
-            dueDate: new Date().toLocaleDateString("sv-SE"),
-            lapseCount: 0,
-            consecutivePasses: 0,
-            isWeak: false,
-            updatedAt: new Date().toISOString(),
-          });
-          transaction.oncomplete = () => {
-            db.close();
-            window.dispatchEvent(new Event("yijing:data-changed"));
-            resolve();
-          };
-          transaction.onerror = () => reject(transaction.error);
-        };
-      });
-    });
-    await expect(status).toHaveAttribute("aria-label", "学习状态：待复习");
-    await expect(page.getByRole("link", { name: "现在复习 →" })).toHaveAttribute("href", "/review");
-
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const transaction = db.transaction(["reviewCardStates", "reviewAttempts"], "readwrite");
-          transaction.objectStore("reviewCardStates").put({
-            cardId: "hexagram-pair-qian-qian",
-            targetType: "hexagram",
-            targetId: "hexagram-01",
-            algorithmVersion: 1,
-            stepIndex: 5,
-            dueDate: "2099-01-01",
-            lapseCount: 0,
-            consecutivePasses: 2,
-            isWeak: false,
-            updatedAt: new Date().toISOString(),
-          });
-          transaction.oncomplete = () => {
-            db.close();
-            window.dispatchEvent(new Event("yijing:data-changed"));
-            resolve();
-          };
-          transaction.onerror = () => reject(transaction.error);
-        };
-      });
-    });
-    await expect(status).toHaveAttribute("aria-label", "学习状态：已掌握");
-
-    await page.evaluate(async () => {
-      await new Promise<void>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const transaction = db.transaction("reviewCardStates", "readwrite");
-          transaction.objectStore("reviewCardStates").put({
-            cardId: "hexagram-pair-qian-qian",
-            targetType: "hexagram",
-            targetId: "hexagram-01",
-            algorithmVersion: 1,
-            stepIndex: Number.NaN,
-            dueDate: "2099-01-01",
-            lapseCount: 0,
-            consecutivePasses: 2,
-            isWeak: false,
-            updatedAt: new Date().toISOString(),
-          });
-          transaction.oncomplete = () => {
-            db.close();
-            window.dispatchEvent(new Event("yijing:data-changed"));
-            resolve();
-          };
-          transaction.onerror = () => {
-            db.close();
-            reject(transaction.error);
-          };
-        };
-      });
-    });
-    await expect(status).toHaveAttribute("aria-label", "学习状态：数据待修复");
-    await expect(page.getByRole("link", { name: "现在复习 →" })).toHaveCount(0);
-    await expect(page.getByRole("link", { name: "打开数据设置 →" })).toHaveAttribute("href", "/settings/data");
+    await expect(page.getByLabel(/学习状态：/)).toHaveCount(0);
   });
 
   test("卦象详情可以收藏并保存个人笔记来源", async ({ page }) => {

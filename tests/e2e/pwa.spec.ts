@@ -28,7 +28,7 @@ test("生产环境离线打开实验室分享链接时保留查询参数", async
   await expect
     .poll(() =>
       page.evaluate(async () => {
-        const cache = await caches.open("yijing-static-v68");
+        const cache = await caches.open("yijing-static-v69");
         const keys = await cache.keys();
         return keys.some((request) => new URL(request.url).search.length > 0);
       }),
@@ -39,7 +39,7 @@ test("生产环境离线打开实验室分享链接时保留查询参数", async
   // HTML. The current worker never writes such entries, but older caches or
   // external tooling may still leave one behind.
   await page.evaluate(async () => {
-        const cache = await caches.open("yijing-static-v68");
+    const cache = await caches.open("yijing-static-v69");
     await cache.put(
       "/lab/hexagram?lower=li&upper=kan&moving=1",
       new Response("<html><body>stale query cache</body></html>", {
@@ -53,7 +53,7 @@ test("生产环境离线打开实验室分享链接时保留查询参数", async
     // cache-level fallback in that browser and leave real navigation to the
     // Chromium run; this keeps the limitation explicit rather than hiding it.
     const fallback = await page.evaluate(async () => {
-        const cache = await caches.open("yijing-static-v68");
+      const cache = await caches.open("yijing-static-v69");
       return Boolean(await cache.match("/lab/hexagram"));
     });
     expect(fallback).toBe(true);
@@ -130,6 +130,11 @@ test("生产环境升级 Service Worker 时会清理旧版本缓存", async ({ p
       "/immediately-previous-cache-marker-v67",
       new Response("immediately-previous-v67", { headers: { "content-type": "text/plain" } }),
     );
+    const v68PreviousCache = await caches.open("yijing-static-v68");
+    await v68PreviousCache.put(
+      "/immediately-previous-cache-marker-v68",
+      new Response("immediately-previous-v68", { headers: { "content-type": "text/plain" } }),
+    );
     const legacyCache = await caches.open("yijing-static-v11");
     await legacyCache.put(
       "/legacy-cache-marker",
@@ -151,7 +156,7 @@ test("生产环境升级 Service Worker 时会清理旧版本缓存", async ({ p
   });
   await expect
     .poll(() => page.evaluate(() => caches.keys()))
-    .toContain("yijing-static-v68");
+    .toContain("yijing-static-v69");
   await expect
     .poll(() => page.evaluate(() => caches.keys()))
     .not.toContain("yijing-static-v19");
@@ -179,6 +184,9 @@ test("生产环境升级 Service Worker 时会清理旧版本缓存", async ({ p
   await expect
     .poll(() => page.evaluate(() => caches.keys()))
     .not.toContain("yijing-static-v67");
+  await expect
+    .poll(() => page.evaluate(() => caches.keys()))
+    .not.toContain("yijing-static-v68");
   await expect
     .poll(() => page.evaluate(() => caches.keys()))
     .not.toContain("yijing-static-v11");

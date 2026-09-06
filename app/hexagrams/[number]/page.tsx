@@ -4,7 +4,6 @@ import { getHexagramByNumber, getTrigram, relationHexagrams } from "@/core/ichin
 import { HexagramGlyph } from "@/components/hexagram/HexagramGlyph";
 import { TrigramGlyph } from "@/components/hexagram/TrigramGlyph";
 import { FavoriteButton } from "@/components/notes/FavoriteButton";
-import { HexagramLearningStatus } from "@/components/hexagram/HexagramLearningStatus";
 import { ContentErrata } from "@/components/content/ContentErrata";
 import { getHexagramStudy } from "@/content/hexagram-study";
 import { CommentaryWorkbench } from "@/components/hexagram/CommentaryWorkbench";
@@ -115,7 +114,6 @@ export default async function HexagramDetailPage({ params }: { params: Promise<{
           </section>
         </div>
       </section>
-      <HexagramLearningStatus hexagramId={hexagram.id} />
       <div className="test-academy-link" aria-label="统一测试入口"><span>想用题目检验记忆？</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
 
       <section className="hexagram-study-sections" aria-label="卦象学习解读"><article className="study-feature-card"><span className="content-label">卦德</span><h2>这一卦如何立身</h2><p>{study.virtue}</p></article><article className="study-feature-card"><span className="content-label">取象</span><h2>从上下卦看画面</h2><p>{study.image}</p></article><article className="study-feature-card"><span className="content-label">速记方法</span><h2>一句话记住结构</h2><p>{study.mnemonic}</p></article></section>

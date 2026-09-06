@@ -1,4 +1,4 @@
-const CACHE_NAME = "yijing-static-v68";
+const CACHE_NAME = "yijing-static-v69";
 const CORE_ROUTES = [
   "/",
   "/learn",

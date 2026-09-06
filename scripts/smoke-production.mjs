@@ -163,8 +163,8 @@ async function assertRoutes(deadline) {
     }
     if (route.path === "/sw.js") {
       const serviceWorker = await response.text();
-      if (!serviceWorker.includes("yijing-static-v68")) {
-        throw new Error("Service Worker 缓存版本不是 yijing-static-v68");
+      if (!serviceWorker.includes("yijing-static-v69")) {
+        throw new Error("Service Worker 缓存版本不是 yijing-static-v69");
       }
     }
     if (route.path.startsWith("/library?")) {
@@ -191,7 +191,7 @@ async function assertRoutes(deadline) {
     healthData.status !== "ok" ||
     healthData.service !== "易境" ||
     healthData.appVersion !== "0.1.0" ||
-      healthData.serviceWorkerCache !== "yijing-static-v68" ||
+      healthData.serviceWorkerCache !== "yijing-static-v69" ||
     healthData.storage !== "postgresql"
   ) {
     throw new Error("/api/health 返回的部署状态摘要不完整或版本不匹配");

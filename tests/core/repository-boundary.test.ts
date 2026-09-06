@@ -266,16 +266,13 @@ describe("数据库访问边界", () => {
     expect(events).toContain("BroadcastChannel");
   });
 
-  it("六十四卦索引从单一只读事务读取收藏与学习状态", () => {
-    const repository = readFileSync(join(process.cwd(), "db/repository.ts"), "utf8");
+  it("六十四卦索引只读取收藏，不再读取或展示学习阶段", () => {
     const index = readFileSync(join(process.cwd(), "components/hexagram/HexagramIndex.tsx"), "utf8");
-    const snapshotStart = repository.indexOf("export function readHexagramIndexSnapshot");
-    const snapshotBody = repository.slice(snapshotStart, repository.indexOf("export function getFavorite", snapshotStart));
-    expect(snapshotBody).toContain('yijingDb.transaction(\n    "r"');
-    expect(snapshotBody).toContain("yijingDb.favorites.toArray()");
-    expect(snapshotBody).toContain("yijingDb.reviewCardStates.toArray()");
-    expect(index).toContain("readHexagramIndexSnapshot");
-    expect(index).not.toContain("Promise.all([listFavorites(), listReviewCardStates()])");
+    expect(index).toContain("listFavorites");
+    expect(index).not.toContain("reviewCardStates");
+    expect(index).not.toContain("studiedIds");
+    expect(index).not.toContain('"未开始"');
+    expect(index).not.toContain('"已学习"');
   });
 
   it("首页勘误汇总从单一只读事务读取待处理列表与计数", () => {
@@ -361,11 +358,10 @@ describe("数据库访问边界", () => {
     expect(notesPage).not.toContain(".catch(() => undefined)");
   });
 
-  it("六十四卦索引读取状态失败时不会静默显示错误的学习标记", () => {
+  it("六十四卦索引收藏读取失败时仍保留卦库内容与重试入口", () => {
     const index = readFileSync(join(process.cwd(), "components/hexagram/HexagramIndex.tsx"), "utf8");
-    expect(index).toContain("正在读取卦象学习状态");
-    expect(index).toContain("卦象学习状态暂时无法读取");
-    expect(index).toContain("onClick={refreshStatus}");
+    expect(index).toContain("收藏标记暂时无法读取，卦库内容不受影响");
+    expect(index).toContain("onClick={refreshFavorites}");
     expect(index).not.toContain(".catch(() => undefined)");
   });
 

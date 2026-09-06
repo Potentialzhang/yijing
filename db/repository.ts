@@ -338,30 +338,6 @@ export function readReviewQueueSnapshot(): Promise<ReviewQueueSnapshot> {
   );
 }
 
-export interface HexagramIndexSnapshot {
-  favorites: FavoriteRecord[];
-  reviewCardStates: ReviewCardState[];
-}
-
-/**
- * Read favorite and learning-state collections together for the hexagram
- * index. The cards render both badges side by side, so a single snapshot
- * avoids showing a newer favorite state with an older learning state.
- */
-export function readHexagramIndexSnapshot(): Promise<HexagramIndexSnapshot> {
-  return yijingDb.transaction(
-    "r",
-    [yijingDb.favorites, yijingDb.reviewCardStates],
-    async () => {
-      const [favorites, reviewCardStates] = await Promise.all([
-        yijingDb.favorites.toArray(),
-        yijingDb.reviewCardStates.toArray(),
-      ]);
-      return { favorites, reviewCardStates };
-    },
-  );
-}
-
 export function getFavorite(id: string): Promise<FavoriteRecord | undefined> {
   return yijingDb.favorites.get(id);
 }

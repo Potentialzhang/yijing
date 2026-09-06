@@ -7880,6 +7880,136 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 .hexagrams-page .subpage-header > .outline-button {
   margin-top: 14px;
 }
+.hexagram-memory-guide {
+  display: grid;
+  gap: 16px;
+  margin-top: 26px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 7%, var(--surface)), var(--surface));
+  box-shadow: var(--shadow);
+}
+.hexagram-memory-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.hexagram-memory-heading .eyebrow,
+.hexagram-memory-heading h2,
+.hexagram-memory-heading > p {
+  margin: 0;
+}
+.hexagram-memory-heading h2 {
+  margin-top: 5px;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 500;
+}
+.hexagram-memory-heading > p {
+  max-width: 390px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.hexagram-memory-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.hexagram-memory-sections article {
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+}
+.hexagram-memory-sections header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.hexagram-memory-sections header strong {
+  color: var(--accent);
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 18px;
+}
+.hexagram-memory-sections header span,
+.hexagram-memory-verses small,
+.hexagram-memory-source {
+  color: var(--muted);
+  font-size: 10px;
+}
+.hexagram-memory-verses {
+  display: grid;
+  gap: 7px;
+}
+.hexagram-memory-verses p {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.hexagram-memory-verses small {
+  padding-top: 2px;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.hexagram-memory-tips {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.hexagram-memory-tips > strong {
+  color: var(--accent);
+  font-size: 12px;
+}
+.hexagram-memory-tips ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding-left: 20px;
+}
+.hexagram-memory-tips li {
+  padding-left: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.hexagram-memory-source {
+  line-height: 1.6;
+}
+.hexagram-favorite-state {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+  background: var(--surface-subtle);
+  font-size: 11px;
+}
+.hexagram-favorite-state .text-button {
+  flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.hex-index-copy .index-favorite {
+  color: var(--accent);
+}
 .hexagrams-page .hexagram-toolbar {
   margin-top: 24px;
 }
@@ -7915,6 +8045,36 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   .hexagram-detail-page .subpage-lead {
     font-size: 13px;
     line-height: 1.65;
+  }
+  .hexagram-memory-guide {
+    gap: 13px;
+    margin-top: 20px;
+    padding: 14px 12px;
+    border-radius: 13px;
+  }
+  .hexagram-memory-heading {
+    display: grid;
+    gap: 7px;
+  }
+  .hexagram-memory-sections {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hexagram-memory-sections article {
+    padding: 12px;
+  }
+  .hexagram-memory-verses p {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 6px;
+    font-size: 13px;
+  }
+  .hexagram-memory-tips {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hexagram-memory-tips ol {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
   .tools-page .tools-hub-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
