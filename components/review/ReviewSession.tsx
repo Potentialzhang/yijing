@@ -21,7 +21,9 @@ import {
   syncConceptProgress,
 } from "@/db/repository";
 import { notifyDataChanged } from "@/db/events";
-import { NoteEditor } from "@/components/notes/NoteEditor";
+import { NoteEntry } from "@/components/notes/NoteEntry";
+// The session note editor is intentionally wrapped by NoteEntry:
+// <NoteEditor targetType="session" targetId={sessionId} />
 import { TRIGRAMS } from "@/core/iching";
 import { TrigramGlyph } from "@/components/hexagram/TrigramGlyph";
 import type { LineValue } from "@/core/iching";
@@ -334,7 +336,7 @@ export function ReviewSession() {
         <p>
           {blockedCount > 0
             ? `发现 ${blockedCount} 张复习卡已暂时隔离：${blockedReasons}。不会静默改写，请先导出数据并使用支持的版本或恢复工具处理。`
-            : "可以去学习地图开始一个新知识点，或者明天再回来。"}
+            : "可以去知识内容索引开始一个新知识点，或者明天再回来。"}
         </p>
         {blockedCount > 0 ? (
           <Link className="outline-button" href="/settings/data">
@@ -342,7 +344,7 @@ export function ReviewSession() {
           </Link>
         ) : (
           <Link className="primary-button" href="/learn">
-            去学习地图 <span>↗</span>
+            去知识内容索引 <span>↗</span>
           </Link>
         )}
       </section>
@@ -363,7 +365,7 @@ export function ReviewSession() {
           答错的卡片已经回到更近的复习间隔。
           {nextDue ? `本组最早下次复习：${nextDue}。` : "复习日期已经更新。"}
         </p>
-        <NoteEditor targetType="session" targetId={sessionId} />
+        <NoteEntry targetType="session" targetId={sessionId} label="打开本次复习笔记" />
         <div className="review-finished-actions">
           {batchOffset < allQueue.length && (
             <button
@@ -566,7 +568,7 @@ export function ReviewSession() {
               placeholder="用一句话说明你为什么这样回答，或记住了什么。"
               disabled={recorded || saving}
             />
-            <small>只保存在当前浏览器，并会在错题回顾中显示。</small>
+            <small>保存到当前账户数据库，并会在错题回顾中显示。</small>
           </div>
         )}
         {selected !== null && (

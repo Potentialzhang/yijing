@@ -97,7 +97,7 @@ export default function ContentSettingsPage() {
 
       <section className="content-audit-calendar" aria-labelledby="content-audit-calendar-heading">
         <div className="section-heading-row">
-          <div><span className="content-label">M2-B01 · ADR-0002</span><h2 id="content-audit-calendar-heading">历法边界样例</h2></div>
+          <div><span className="content-label">内容校验 · 规则边界</span><h2 id="content-audit-calendar-heading">历法边界样例</h2></div>
           <span>{calendarCoverage.verifiedSampleCount} / {calendarCoverage.sampleCount} 已核验</span>
         </div>
         <p className="content-audit-manifest-intro">

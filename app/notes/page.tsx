@@ -211,7 +211,7 @@ export default function NotesPage() {
         <Link href="/" className="back-link">← 回到今日</Link>
         <p className="eyebrow">个人知识库 · 本地笔记</p>
         <h1>把理解留下来。</h1>
-        <p className="subpage-lead">笔记、收藏与来源只保存在当前浏览器。先在详情页留下自己的理解，再回到这里按内容和上下文回看。</p>
+        <p className="subpage-lead">笔记、收藏与来源保存到当前账户数据库。先在详情页留下自己的理解，再回到这里按内容和上下文回看。</p>
       </header>
       <div className="notes-toolbar">
         <label>搜索笔记与收藏<input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="输入卦名、关键词、标签或来源" /></label>

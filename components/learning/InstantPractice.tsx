@@ -378,7 +378,7 @@ export function InstantPractice({
             placeholder="用一句话说明你为什么这样回答，或记住了什么。"
             disabled={saved || saving}
           />
-          <small>点击下一题时保存；只保存在当前浏览器，并会在错题回顾中显示。</small>
+          <small>点击下一题时保存到当前账户数据库，并会在错题回顾中显示。</small>
         </div>
       )}
       {error && (

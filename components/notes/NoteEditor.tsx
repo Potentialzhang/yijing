@@ -333,7 +333,7 @@ export function NoteEditor({
           </div>
         </>
       )}
-      <small>笔记只保存在当前浏览器，可在数据设置页导出备份。</small>
+      <small>笔记保存到当前账户的 PostgreSQL 数据库，可在数据设置页导出备份。</small>
     </section>
   );
 }

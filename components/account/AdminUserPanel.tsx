@@ -113,11 +113,11 @@ export function AdminUserPanel({ currentUserId }: { currentUserId: string }) {
                 const isSelf = user.id === currentUserId;
                 const busy = busyId === user.id;
                 return <tr key={user.id}>
-                  <td><strong>{user.displayName || "未设置名称"}</strong><small>{user.email}</small></td>
-                  <td><span className={`admin-user-badge ${user.isDisabled ? "is-disabled" : "is-active"}`}>{user.isDisabled ? "已禁用" : "启用"}</span>{user.isAdmin && <span className="admin-user-badge is-admin">管理员</span>}</td>
-                  <td>{formatDate(user.createdAt)}</td>
-                  <td>{formatDate(user.lastLoginAt)}</td>
-                  <td><div className="admin-user-actions">
+                  <td data-label="账户"><strong>{user.displayName || "未设置名称"}</strong><small>{user.email}</small></td>
+                  <td data-label="状态"><span className={`admin-user-badge ${user.isDisabled ? "is-disabled" : "is-active"}`}>{user.isDisabled ? "已禁用" : "启用"}</span>{user.isAdmin && <span className="admin-user-badge is-admin">管理员</span>}</td>
+                  <td data-label="注册时间">{formatDate(user.createdAt)}</td>
+                  <td data-label="最近登录">{formatDate(user.lastLoginAt)}</td>
+                  <td data-label="操作"><div className="admin-user-actions">
                     {isSelf ? <span className="admin-user-self">当前账户</span> : <>
                       <button className="outline-button" type="button" disabled={busy} onClick={() => void updateUser(user, { isDisabled: !user.isDisabled })}>{user.isDisabled ? "启用" : "禁用"}</button>
                       <button className="text-danger-button" type="button" disabled={busy} onClick={() => void deleteUser(user)}>删除</button>

@@ -20,7 +20,7 @@ export function Preferences() {
   const [fontScale, setFontScale] = useState<string>(DEFAULT_PREFERENCES.fontScale);
   const [dailyNewCardLimit, setDailyNewCardLimit] = useState<number>(DEFAULT_PREFERENCES.dailyNewCardLimit);
   const [sessionBatchSize, setSessionBatchSize] = useState<number>(DEFAULT_PREFERENCES.sessionBatchSize);
-  const [status, setStatus] = useState("设置只保存在当前浏览器。");
+  const [status, setStatus] = useState("设置保存到当前账户数据库。");
   const [loading, setLoading] = useState(true);
   const userChanged = useRef(false);
   // Event handlers can run back-to-back before React commits the state from

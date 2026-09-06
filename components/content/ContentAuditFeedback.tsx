@@ -100,7 +100,7 @@ export function ContentAuditFeedback() {
         </ul>
       )}
       {openItems.length > 5 && <small>还有 {openItems.length - 5} 条待处理记录，请从对应内容页继续查看。</small>}
-      <small>已处理 {counts.resolved} 条 · 勘误只保存在当前浏览器，不会自动替换内置内容。</small>
+      <small>已处理 {counts.resolved} 条 · 勘误保存到当前账户，不会自动替换内置内容。</small>
     </section>
   );
 }

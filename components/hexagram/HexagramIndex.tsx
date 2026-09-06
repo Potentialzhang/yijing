@@ -4,11 +4,21 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { HEXAGRAMS, getTrigram } from "@/core/iching";
 import { HexagramGlyph } from "@/components/hexagram/HexagramGlyph";
+import { TrigramGlyph } from "@/components/hexagram/TrigramGlyph";
+import { getHexagramStudy } from "@/content/hexagram-study";
 import { readHexagramIndexSnapshot } from "@/db/repository";
 import { DATA_CHANGED_EVENT } from "@/db/events";
 
 const HexagramIndexCard = memo(function HexagramIndexCard({ hexagram, favorite, studied }: { hexagram: (typeof HEXAGRAMS)[number]; favorite: boolean; studied: boolean }) {
-  return <Link href={`/hexagrams/${hexagram.kingWenNumber}`} className="hexagram-index-card"><span className="hex-number">{String(hexagram.kingWenNumber).padStart(2, "0")}</span><span className="unicode-symbol" aria-hidden="true">{hexagram.unicodeSymbol}</span><HexagramGlyph lines={hexagram.lines} label={`${hexagram.name}卦象`} /><div><strong>{hexagram.name}</strong><small>上 {getTrigram(hexagram.upperTrigramId).name} · 下 {getTrigram(hexagram.lowerTrigramId).name}</small><small className="index-status">{favorite ? "★ 已收藏" : studied ? "已学习" : "未开始"}</small></div><span className="index-arrow">↗</span></Link>;
+  const lower = getTrigram(hexagram.lowerTrigramId);
+  const upper = getTrigram(hexagram.upperTrigramId);
+  const study = getHexagramStudy(hexagram);
+  return <Link href={`/hexagrams/${hexagram.kingWenNumber}`} className="hexagram-index-card">
+    <div className="hex-index-top"><span className="hex-number">第 {hexagram.kingWenNumber} 卦</span><span className="hex-index-nature">{lower.nature}{upper.nature}</span></div>
+    <div className="hex-index-visual"><HexagramGlyph lines={hexagram.lines} label={`${study.shortName}六爻卦象`} /><div className="hex-index-trigrams" aria-label={`下卦${lower.name}、上卦${upper.name}`}><TrigramGlyph lines={lower.lines} label={`下卦${lower.name}三爻`} /><TrigramGlyph lines={upper.lines} label={`上卦${upper.name}三爻`} /></div></div>
+    <div className="hex-index-copy"><strong>{study.shortName}</strong><small>{lower.name}下 · {upper.name}上</small><small className="index-status">{favorite ? "★ 已收藏" : studied ? "已学习" : "未开始"}</small></div>
+    <span className="index-arrow" aria-hidden="true">↗</span>
+  </Link>;
 });
 
 export function HexagramIndex() {
@@ -61,5 +71,5 @@ export function HexagramIndex() {
     setQuery("");
     setFilterQuery("");
   };
-  return <><div className="hexagram-toolbar"><label>搜索卦名、序号或上下卦<input value={query} onChange={(event) => updateQuery(event.target.value)} onCompositionStart={() => { isComposing.current = true; }} onCompositionEnd={(event) => { isComposing.current = false; updateQuery(event.currentTarget.value); }} placeholder="例如：既济、63、上坎" /></label>{query && <button type="button" className="text-button clear-search" onClick={clearQuery}>清空筛选</button>}<span role="status" aria-live="polite" aria-atomic="true">{filtered.length === HEXAGRAMS.length ? `共 ${HEXAGRAMS.length} 卦` : `匹配 ${filtered.length} 卦`}</span></div>{filtered.length ? <div className="hexagram-index">{filtered.map((hexagram) => <HexagramIndexCard key={hexagram.id} hexagram={hexagram} favorite={favoriteIds.has(hexagram.id)} studied={studiedIds.has(hexagram.id)} />)}</div> : <div className="empty-state"><span>⌕</span><h2>没有匹配的卦</h2><p>可以输入卦名、1～64 的序号，或上卦/下卦名称。</p><button type="button" className="outline-button" onClick={clearQuery}>清空搜索</button></div>}</>;
+  return <><div className="hexagram-toolbar"><label>搜索卦名、序号或上下卦<input value={query} onChange={(event) => updateQuery(event.target.value)} onCompositionStart={() => { isComposing.current = true; }} onCompositionEnd={(event) => { isComposing.current = false; updateQuery(event.currentTarget.value); }} placeholder="例如：既济、63、上坎" /></label>{query && <button type="button" className="text-button clear-search" onClick={clearQuery}>清空筛选</button>}<span role="status" aria-live="polite" aria-atomic="true">{filtered.length === HEXAGRAMS.length ? `共 ${HEXAGRAMS.length} 卦` : `匹配 ${filtered.length} 卦`}</span></div><p className="hexagram-index-hint">按卦序排列 · 点击卡片查看完整卦德、取象、经典文本与逐爻解释</p>{filtered.length ? <div className="hexagram-index">{filtered.map((hexagram) => <HexagramIndexCard key={hexagram.id} hexagram={hexagram} favorite={favoriteIds.has(hexagram.id)} studied={studiedIds.has(hexagram.id)} />)}</div> : <div className="empty-state"><span>⌕</span><h2>没有匹配的卦</h2><p>可以输入卦名、1～64 的序号，或上卦/下卦名称。</p><button type="button" className="outline-button" onClick={clearQuery}>清空搜索</button></div>}</>;
 }

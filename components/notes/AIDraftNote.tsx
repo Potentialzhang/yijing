@@ -15,7 +15,7 @@ function DraftLoader({ id }: { id: string }) {
     return () => { active = false; };
   }, [id]);
   if (state === "loading") return <p role="status">正在读取笔记…</p>;
-  if (state === "missing") return <p role="status">当前浏览器没有这篇草稿，请回到笔记库查找或导入备份。</p>;
+  if (state === "missing") return <p role="status">当前账户没有这篇草稿，请回到笔记库查找或导入备份。</p>;
   return <NoteEditor targetType="session" targetId={id} />;
 }
 

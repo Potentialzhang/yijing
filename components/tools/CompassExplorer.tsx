@@ -556,7 +556,10 @@ export function CompassExplorer() {
           aria-label={`当前盘面旋转 ${formatted} 度`}
         >
           {COMPASS_DIRECTIONS.map((item) => (
-            <span key={item.id} className={`compass-label compass-${item.id}`}>
+            <button type="button" key={item.id} className={`compass-label compass-${item.id} ${target.id === item.id ? "is-current" : ""}`} aria-pressed={target.id === item.id} onClick={() => {
+              if (mode === "quiz") { if (quizAnswer === null) setQuizAnswer(item.id); }
+              else { stopSensor(); setDegrees(item.centerDegrees); }
+            }}>
               {mode === "hide-labels" ? (
                 <span aria-hidden="true">•</span>
               ) : (
@@ -565,7 +568,7 @@ export function CompassExplorer() {
                   <small>{item.label}</small>
                 </>
               )}
-            </span>
+            </button>
           ))}
           <div className="compass-center" aria-hidden="true">
             易

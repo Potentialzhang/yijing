@@ -118,7 +118,7 @@ export function SelfTest() {
   }
 
   if (loading) return <section className="self-test-panel" role="status"><span className="eyebrow">快速自测</span><h2>正在读取上次自测…</h2></section>;
-  if (loadError && !started && !result && !savedResult) return <section className="self-test-panel"><strong>快速自测暂时无法读取本地数据。</strong><p>可以重试读取，或先从学习地图开始。</p><div className="self-test-actions"><button type="button" className="outline-button" onClick={refresh}>重试读取</button><Link className="outline-button" href="/learn">去学习地图 <span>↗</span></Link></div></section>;
+  if (loadError && !started && !result && !savedResult) return <section className="self-test-panel"><strong>快速自测暂时无法读取账户数据。</strong><p>可以重试读取，或先去测试学堂查看练习类型。</p><div className="self-test-actions"><button type="button" className="outline-button" onClick={refresh}>重试读取</button><Link className="outline-button" href="/test-academy">去测试学堂 <span>↗</span></Link></div></section>;
 
   if (result || savedResult) {
     const display = result ?? savedResult;

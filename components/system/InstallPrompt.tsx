@@ -96,7 +96,7 @@ export function InstallPrompt() {
     <aside className="install-prompt" aria-label="安装易境">
       <div>
         <strong>{ios ? "把易境添加到主屏幕" : "把易境放到主屏幕"}</strong>
-        <p>{ios ? "在 Safari 中点分享，再选择“添加到主屏幕”，即可使用离线学习。" : "安装后可以更快打开学习地图，并在支持的平台使用离线缓存。"}</p>
+        <p>{ios ? "在 Safari 中点分享，再选择“添加到主屏幕”，即可使用易境。" : "安装后可以更快打开测试学堂，并在支持的平台使用离线缓存。"}</p>
       </div>
       <div className="install-prompt-actions">
         {installEvent ? <button type="button" className="primary-button" onClick={() => void install()} disabled={working}>

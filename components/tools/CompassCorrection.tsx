@@ -113,7 +113,7 @@ export function CompassCorrection({
     <section className="compass-correction" aria-label="罗盘手动偏差修正">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">M3-B04 · 可选修正</p>
+          <p className="eyebrow">罗盘偏差 · 可选修正</p>
           <h2>把已知偏差留下说明。</h2>
         </div>
         <span>

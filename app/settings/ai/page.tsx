@@ -17,7 +17,7 @@ export default function AIAssistPage() {
       </header>
       <AIAssistSettings />
       <section className="pending-content">
-        <span className="content-label">M4-001 / M4-002</span>
+        <span className="content-label">AI 辅学 · 授权说明</span>
         <h2>授权、来源和原文保持分层。</h2>
         <p>
           模型请求携带选定范围、用途、契约版本和来源编号。AI

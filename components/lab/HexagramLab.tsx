@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getHexagramByLines, getHexagramByPair, getTrigram, relationHexagrams, TRIGRAMS, toggleLines } from "@/core/iching";
+import { getHexagramByLines, getHexagramByPair, getTrigram, relationHexagrams, TRIGRAMS, HEXAGRAMS, toggleLines } from "@/core/iching";
 import type { LinePosition, TrigramId } from "@/core/iching";
 import { HexagramGlyph } from "@/components/hexagram/HexagramGlyph";
 import { type LabSnapshotRecord } from "@/db/schema";
@@ -10,6 +10,7 @@ import { DATA_CHANGED_EVENT, notifyDataChanged } from "@/db/events";
 import { formatLocalDateTime } from "@/core/date/local";
 
 const POSITIONS: readonly LinePosition[] = [1, 2, 3, 4, 5, 6];
+function snapshotHexagramName(id: string) { return HEXAGRAMS.find((hexagram) => hexagram.id === id)?.name ?? "未知卦"; }
 
 function RelationCard({ title, name, number, process }: { title: string; name: string; number: number; process: string }) {
   return <div className="relation-card"><span>{title}</span><strong>{name}</strong><small>第 {number} 卦</small><details><summary>查看计算过程</summary><p>{process}</p></details></div>;
@@ -157,7 +158,7 @@ export function HexagramLab({ id = "lab" }: { id?: string } = {}) {
       <div className="relations-grid" aria-label="关系卦"><RelationCard title="错卦 · 阴阳反转" name={relations.opposite.name} number={relations.opposite.kingWenNumber} process="逐爻将六个阴阳值反转：1 变 0，0 变 1。" /><RelationCard title="综卦 · 上下倒置" name={relations.reversed.name} number={relations.reversed.kingWenNumber} process="把第 1～6 爻倒序排列，初爻与上爻交换位置。" /><RelationCard title="互卦 · 取二至五爻" name={relations.nuclear.name} number={relations.nuclear.kingWenNumber} process="下互取第 2、3、4 爻，上互取第 3、4、5 爻，再组合为六爻。" /></div>
       {snapshotLoading && <p className="lab-snapshot-loading" role="status">正在读取已保存推演…</p>}
       {snapshotError && <p className="lab-snapshot-error" role="alert">已保存推演暂时无法读取，当前实验内容仍可继续使用。<button type="button" className="text-button" onClick={refreshSnapshots}>重试读取</button></p>}
-      {!snapshotLoading && snapshots.length > 0 && <section className="lab-snapshots" aria-label="已保存推演"><div className="section-heading"><div><p className="eyebrow">本地快照</p><h3>继续之前的推演</h3></div><span>{snapshots.length} 条</span></div><div className="snapshot-list">{snapshots.map((snapshot) => <div className="snapshot-item" key={snapshot.id}><div><strong>{snapshot.title}</strong><small>{snapshot.baseHexagramId} → {snapshot.changedHexagramId} · {formatLocalDateTime(snapshot.createdAt)}</small>{snapshot.note && <p>{snapshot.note}</p>}</div><button type="button" className="outline-button" onClick={() => restoreSnapshot(snapshot)}>恢复</button></div>)}</div></section>}
+      {!snapshotLoading && snapshots.length > 0 && <section className="lab-snapshots" aria-label="已保存推演"><div className="section-heading"><div><p className="eyebrow">账户推演记录</p><h3>继续之前的推演</h3></div><span>{snapshots.length} 条</span></div><div className="snapshot-list">{snapshots.map((snapshot) => <div className="snapshot-item" key={snapshot.id}><div><strong>{snapshot.title}</strong><small>{snapshotHexagramName(snapshot.baseHexagramId)} → {snapshotHexagramName(snapshot.changedHexagramId)} · {formatLocalDateTime(snapshot.createdAt)}</small>{snapshot.note && <p>{snapshot.note}</p>}</div><button type="button" className="outline-button" onClick={() => restoreSnapshot(snapshot)}>恢复</button></div>)}</div></section>}
       {shareStatus && <p className="share-status" role="status">{shareStatus}。链接只包含上下卦与动爻，不包含个人笔记。</p>}
     </section>
   );

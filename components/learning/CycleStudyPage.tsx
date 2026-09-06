@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FavoriteButton } from "@/components/notes/FavoriteButton";
-import { NoteEditor } from "@/components/notes/NoteEditor";
+import { NoteEntry } from "@/components/notes/NoteEntry";
 import { ContentErrata } from "@/components/content/ContentErrata";
 import { PrerequisiteNotice } from "@/components/learning/PrerequisiteNotice";
 import { InstantPractice } from "@/components/learning/InstantPractice";
@@ -33,7 +33,7 @@ export function CycleStudyPage({ conceptId, title, lead, intro, items, relatedCo
   return (
     <main className="subpage">
       <header className="subpage-header">
-        <Link href="/learn" className="back-link">← 学习地图</Link>
+        <Link href="/learn" className="back-link">← 知识内容索引</Link>
         <p className="eyebrow">M2 静态知识 · 内容待复核</p>
         <h1>{title}</h1>
         <div className="detail-header-actions">
@@ -54,7 +54,7 @@ export function CycleStudyPage({ conceptId, title, lead, intro, items, relatedCo
       <section className="cycle-grid" aria-label={title}>
         {items.map((item) => (
           <article className="cycle-card" key={item.id}>
-            <div className="cycle-card-heading"><span>{String(item.index).padStart(2, "0")}</span><strong>{item.name}</strong><em>{item.yinYang}</em></div>
+            <div className="cycle-card-heading"><span>第 {item.index} 位</span><strong>{item.name}</strong><em>{item.yinYang}</em></div>
             <div className="cycle-facts">
               <span>五行<strong>{item.element}</strong></span>
               {isBranch(item) ? <><span>方位提示<strong>{item.direction}</strong></span><span>时段提示<strong>{item.doubleHour}</strong></span><span>月份提示<strong>{item.monthHint}</strong></span></> : <span>序列位置<strong>第 {item.index} 位</strong></span>}
@@ -78,7 +78,7 @@ export function CycleStudyPage({ conceptId, title, lead, intro, items, relatedCo
 
       <InstantPractice targetType="concept" targetId={conceptId} />
       <ContentErrata targetType="concept" targetId={conceptId} contentVersion={1} />
-      <NoteEditor targetType="concept" targetId={conceptId} />
+      <NoteEntry targetType="concept" targetId={conceptId} label="打开本节个人笔记" />
     </main>
   );
 }

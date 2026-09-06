@@ -102,7 +102,7 @@ export function CompassRecords({
     <section className="compass-records" aria-label="坐向记录">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">M3-A07 · 本地记录</p>
+          <p className="eyebrow">坐向记录 · 账户数据库</p>
           <h2>把一次观察留下来。</h2>
         </div>
         <span>{records.length} 条</span>

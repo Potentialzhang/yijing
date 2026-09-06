@@ -302,7 +302,7 @@ export function AIAssistSettings() {
       <AIStudyWorkspace key={`${enabled}-${scopes.join(",")}`} enabled={enabled && !loadError} scopes={scopes} />
       <section className="ai-policy-panel" aria-label="AI 服务降级与删除策略">
         <div>
-          <p className="eyebrow">M4-006 / M4-007</p>
+          <p className="eyebrow">AI 辅学 · 服务策略</p>
           <h2>随时撤销，失败时回到本地学习。</h2>
         </div>
         <p>

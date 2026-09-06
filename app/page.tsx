@@ -1,16 +1,14 @@
 import Link from "next/link";
 import { DeferredHexagramLab } from "@/components/lab/DeferredHexagramLab";
 import { HEXAGRAMS } from "@/core/iching";
-import { KNOWLEDGE_CONCEPTS } from "@/content/knowledge";
 import { FIVE_ELEMENTS } from "@/content/five-elements";
 import { TodayStats } from "@/components/dashboard/TodayStats";
 import { TodayTasks } from "@/components/dashboard/TodayTasks";
 import { TodayLabel } from "@/components/dashboard/TodayLabel";
-import { LessonStatus } from "@/components/learning/LessonStatus";
 import { ResponsiveMenu, type ResponsiveMenuItem } from "@/components/navigation/ResponsiveMenu";
 import { ProfileChip } from "@/components/account/ProfileChip";
 
-const navItems = [{ href: "#today", label: "今日" }, { href: "/learn", label: "学习地图" }, { href: "/lab/hexagram", label: "卦象实验室" }, { href: "/hexagrams", label: "六十四卦" }, { href: "/review", label: "复习" }, { href: "/notes", label: "笔记" }, { href: "/tools", label: "工具" }, { href: "/settings/data", label: "设置" }] as const satisfies readonly ResponsiveMenuItem[];
+const navItems = [{ href: "#today", label: "今日" }, { href: "/test-academy", label: "测试学堂" }, { href: "/divination", label: "算卦" }, { href: "/lab/hexagram", label: "卦象实验室" }, { href: "/hexagrams", label: "卦库" }, { href: "/review", label: "复习" }, { href: "/notes", label: "笔记" }, { href: "/tools", label: "工具" }, { href: "/settings/data", label: "设置" }] as const satisfies readonly ResponsiveMenuItem[];
 
 export default function Home() {
   return (
@@ -27,7 +25,7 @@ export default function Home() {
           <TodayStats />
         </section>
         <TodayTasks />
-        <section className="section-block" id="learning-map"><div className="section-heading"><div><p className="eyebrow">学习地图 · 由浅入深</p><h2>沿着关系学习，不再孤立背诵</h2></div><Link className="link-arrow" href="/learn">查看全部 <span>→</span></Link></div><div className="concept-grid">{KNOWLEDGE_CONCEPTS.slice(0, 3).map((concept, index) => <Link className="concept-card" href={`/learn/${concept.id}`} key={concept.id}><div className="concept-index">{String(index + 1).padStart(2, "0")}</div><div className="concept-body"><span>{concept.stage}</span><h3>{concept.title}</h3><p>{concept.summary}</p><div className="concept-meta"><LessonStatus conceptId={concept.id} /><span className="card-arrow">↗</span></div></div></Link>)}</div></section>
+        <section className="section-block home-academy" id="academy"><div className="section-heading"><div><p className="eyebrow">测试学堂 · 统一入口</p><h2>今天练什么，由你选择。</h2></div><Link className="link-arrow" href="/test-academy">进入测试学堂 <span>→</span></Link></div><div className="home-academy-grid"><Link href="/test-academy" className="home-academy-card"><strong>认卦与认爻</strong><span>从三爻、六爻结构开始</span></Link><Link href="/test-academy" className="home-academy-card"><strong>卦辞与爻辞</strong><span>先读原文，再做含义配对</span></Link><Link href="/divination" className="home-academy-card"><strong>六次铜钱起卦</strong><span>记录、生成并复盘本卦变卦</span></Link></div></section>
         <section className="quick-tools"><div className="section-heading"><div><p className="eyebrow">快速工具</p><h2>把抽象关系放到眼前</h2></div></div><div className="tool-grid"><Link href="/tools/five-elements" className="tool-card element-tool"><div className="tool-icon">◌</div><div><h3>五行生克</h3><p>点击一个元素，看看它生谁、克谁。</p></div><span>↗</span><div className="element-rings">{FIVE_ELEMENTS.map((element) => <i key={element.id} style={{ backgroundColor: element.color }} />)}</div></Link><Link href="/hexagrams" className="tool-card hex-tool"><div className="tool-icon">䷀</div><div><h3>六十四卦</h3><p>按卦序浏览结构，建立整体地图。</p></div><span>↗</span><strong>{HEXAGRAMS.length}<small> 卦</small></strong></Link></div></section>
         <DeferredHexagramLab />
         <footer className="page-footer"><span>易境 · 个人易学学习工具</span><span>结构先于断语 · 学习重于预测</span></footer>

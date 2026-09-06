@@ -37,6 +37,12 @@ const tools = [
     description: "切换八方和二十四山，点击定位、练习边界、记录坐向。",
     label: "M3",
   },
+  {
+    href: "/divination",
+    title: "六次铜钱起卦",
+    description: "依次录入六次铜钱结果，自动生成本卦、动爻和变卦。",
+    label: "算卦",
+  },
 ];
 
 export default function ToolsPage() {
@@ -49,7 +55,7 @@ export default function ToolsPage() {
         <p className="eyebrow">工具集合 · 结构优先</p>
         <h1>把关系放到眼前。</h1>
         <p className="subpage-lead">
-          先通过可操作的结构建立记忆，再回到学习地图补充概念。历法计算和罗盘映射均列出所用规则，不用于预测命运。
+          先通过可操作的结构建立记忆，再到测试学堂统一练习。历法计算和罗盘映射均列出所用规则，不用于预测命运。
         </p>
       </header>
       <div className="tools-hub-grid">

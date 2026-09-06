@@ -7,7 +7,8 @@ import { isNavigationItemCurrent } from "@/core/navigation/navigation";
 
 const items = [
   { href: "/", label: "今日" },
-  { href: "/learn", label: "学习地图" },
+  { href: "/test-academy", label: "测试学堂" },
+  { href: "/divination", label: "算卦" },
   { href: "/lab/hexagram", label: "卦象实验室" },
   { href: "/hexagrams", label: "六十四卦" },
   { href: "/review", label: "复习" },
