@@ -112,7 +112,7 @@ export const EXERCISES: readonly Exercise[] = [
   ...KNOWLEDGE_CONCEPTS.flatMap((concept) => [
     { id: `concept-name-${concept.id}`, kind: "concept-recall" as const, prompt: `本节学习的知识点名称是什么？`, targetType: "concept" as const, targetId: concept.id, display: concept.summary, choices: choices(concept.title, conceptTitles), answer: concept.title, explanation: `当前知识点是“${concept.title}”，先用一句话复述其定义。` },
     { id: `concept-keyword-${concept.id}`, kind: "concept-recall" as const, prompt: `“${concept.title}”最先要记住哪个关键词？`, targetType: "concept" as const, targetId: concept.id, display: concept.title, choices: choices(concept.keywords[0], [...new Set(KNOWLEDGE_CONCEPTS.flatMap((item) => item.keywords))]), answer: concept.keywords[0], explanation: `本节关键词包括：${concept.keywords.join("、")}。` },
-    { id: `concept-stage-${concept.id}`, kind: "concept-recall" as const, prompt: `“${concept.title}”属于哪一个学习阶段？`, targetType: "concept" as const, targetId: concept.id, display: concept.title, choices: choices(concept.stage, [...new Set(KNOWLEDGE_CONCEPTS.map((item) => item.stage))]), answer: concept.stage, explanation: `学习地图把它放在${concept.stage}。` },
+    { id: `concept-stage-${concept.id}`, kind: "concept-recall" as const, prompt: `“${concept.title}”属于哪一个学习阶段？`, targetType: "concept" as const, targetId: concept.id, display: concept.title, choices: choices(concept.stage, [...new Set(KNOWLEDGE_CONCEPTS.map((item) => item.stage))]), answer: concept.stage, explanation: `知识内容索引把它放在${concept.stage}。` },
   ]),
 ];
 
