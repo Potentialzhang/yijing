@@ -76,6 +76,7 @@ describe("移动端布局边界", () => {
   it("卦库在大屏八列、小屏四列展示", () => {
     const responsiveIndex = styles.slice(styles.lastIndexOf("/* Responsive 64-hexagram library"));
     expect(responsiveIndex).toContain(".hexagram-index {\n  grid-template-columns: repeat(8, minmax(0, 1fr));");
+    expect(responsiveIndex).toContain(".hexagram-index-card > div:last-of-type {\n  grid-column: auto;");
     expect(responsiveIndex).toContain("@media (max-width: 760px) {\n  .hexagram-index {\n    grid-template-columns: repeat(4, minmax(0, 1fr));");
   });
 

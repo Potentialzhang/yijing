@@ -7666,6 +7666,9 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
   padding: 9px 8px;
   gap: 5px;
 }
+.hexagram-index-card > div:last-of-type {
+  grid-column: auto;
+}
 .hex-index-top {
   gap: 3px;
 }
@@ -7729,6 +7732,16 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
 }
 .hex-index-copy small {
   font-size: 9px;
+}
+
+@media (max-width: 900px) {
+  .hexagram-index {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .hexagram-index-card {
+    min-height: 164px;
+  }
 }
 
 @media (max-width: 760px) {
