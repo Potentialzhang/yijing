@@ -3,7 +3,7 @@ import { CalendarInputExplorer } from "@/components/tools/CalendarInputExplorer"
 
 export default function CalendarPage() {
   return (
-    <main className="subpage">
+    <main className="subpage tool-page">
       <header className="subpage-header">
         <Link href="/tools" className="back-link">
           ← 工具
@@ -16,6 +16,7 @@ export default function CalendarPage() {
         </p>
       </header>
       <CalendarInputExplorer />
+      <div className="test-academy-link" aria-label="统一测试入口"><span>需要检验干支与节气记忆？</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
       <section className="pending-content">
         <span className="content-label">规则边界</span>
         <h2>明确边界，理解变化。</h2>

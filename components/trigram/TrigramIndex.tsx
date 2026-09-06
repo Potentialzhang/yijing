@@ -17,7 +17,7 @@ interface TrigramIndexProps {
 /** Shared trigram index with a context-specific return link. */
 export function TrigramIndex({ backHref, backLabel }: TrigramIndexProps) {
   return (
-    <main className="subpage">
+    <main className="subpage trigram-index-page">
       <header className="subpage-header">
         <Link href={backHref} className="back-link">{backLabel}</Link>
         <p className="eyebrow">八卦卡片 · 三爻结构</p>

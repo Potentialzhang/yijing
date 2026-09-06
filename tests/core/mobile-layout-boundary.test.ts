@@ -78,4 +78,30 @@ describe("移动端布局边界", () => {
     expect(responsiveIndex).toContain(".hexagram-index {\n  grid-template-columns: repeat(8, minmax(0, 1fr));");
     expect(responsiveIndex).toContain("@media (max-width: 760px) {\n  .hexagram-index {\n    grid-template-columns: repeat(4, minmax(0, 1fr));");
   });
+
+  it("工具集合在手机上收紧为双列卡片", () => {
+    const denseTools = styles.slice(styles.lastIndexOf("/* Dense tool and reading layouts"));
+    expect(denseTools).toContain(".tools-page .tools-hub-grid {\n  grid-template-columns: repeat(3, minmax(0, 1fr));");
+    expect(denseTools).toContain(".tools-page .tools-hub-card {\n  min-height: 154px;");
+    expect(denseTools).toContain("@media (max-width: 760px) {\n  .tools-page,");
+    expect(denseTools).toContain(".tools-page .tools-hub-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));");
+    const toolsPage = readFileSync(join(process.cwd(), "app/tools/page.tsx"), "utf8");
+    expect(toolsPage).toContain('href="/test-academy"');
+  });
+
+  it("工具和内容页面只保留统一测试入口", () => {
+    const files = [
+      "app/hexagrams/[number]/page.tsx",
+      "app/trigrams/[id]/page.tsx",
+      "app/learn/[conceptId]/page.tsx",
+      "components/learning/CycleStudyPage.tsx",
+      "components/tools/FiveElementsExplorer.tsx",
+    ];
+    files.forEach((file) => {
+      expect(readFileSync(join(process.cwd(), file), "utf8")).not.toContain("InstantPractice");
+    });
+    const compass = readFileSync(join(process.cwd(), "components/tools/CompassExplorer.tsx"), "utf8");
+    expect(compass).not.toContain("方位测验");
+    expect(compass).not.toContain('type CompassMode = "explore" | "hide-labels" | "quiz"');
+  });
 });

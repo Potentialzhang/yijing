@@ -8,7 +8,6 @@ import { FavoriteButton } from "@/components/notes/FavoriteButton";
 import { HexagramLearningStatus } from "@/components/hexagram/HexagramLearningStatus";
 import { ContentErrata } from "@/components/content/ContentErrata";
 import { getHexagramStudy } from "@/content/hexagram-study";
-import { InstantPractice } from "@/components/learning/InstantPractice";
 
 export function generateStaticParams() { return Array.from({ length: 64 }, (_, index) => ({ number: String(index + 1) })); }
 
@@ -60,7 +59,7 @@ export default async function HexagramDetailPage({ params }: { params: Promise<{
   const study = getHexagramStudy(hexagram);
 
   return (
-    <main className="subpage">
+    <main className="subpage hexagram-detail-page">
       <header className="subpage-header">
         <Link href="/hexagrams" className="back-link">← 六十四卦索引</Link>
         <p className="eyebrow">第 {hexagram.kingWenNumber} 卦 · 卦库详情</p>
@@ -73,7 +72,7 @@ export default async function HexagramDetailPage({ params }: { params: Promise<{
         <div className="detail-copy"><span className="content-label">卦象摘要</span><h2>{hexagram.name}</h2><p>{study.image}</p><div className="structure-table hexagram-trigram-table"><div><span>下卦</span><div className="trigram-inline"><TrigramGlyph lines={lowerTrigram.lines} label={`下卦${lowerTrigram.name}三爻`} /><strong>{lowerTrigram.name}</strong></div><small>{lowerTrigram.nature} · {lowerTrigram.element} · {lowerTrigram.direction}</small></div><div><span>上卦</span><div className="trigram-inline"><TrigramGlyph lines={upperTrigram.lines} label={`上卦${upperTrigram.name}三爻`} /><strong>{upperTrigram.name}</strong></div><small>{upperTrigram.nature} · {upperTrigram.element} · {upperTrigram.direction}</small></div></div><div className="structure-table">{hexagram.lines.map((line, index) => <div key={index}><span>{lineLabel(index)}</span><strong>{line === 1 ? "阳爻" : "阴爻"}</strong><small>{line === 1 ? "━━" : "━ ━"}</small></div>)}</div></div>
       </section>
       <HexagramLearningStatus hexagramId={hexagram.id} />
-      <InstantPractice targetType="hexagram" targetId={hexagram.id} />
+      <div className="test-academy-link" aria-label="统一测试入口"><span>想用题目检验记忆？</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
 
       <section className="hexagram-study-sections" aria-label="卦辞与学习解读"><article className="study-feature-card"><span className="content-label">卦德</span><h2>这一卦如何立身</h2><p>{study.virtue}</p></article><article className="study-feature-card"><span className="content-label">取象</span><h2>从上下卦看画面</h2><p>{study.image}</p></article><article className="study-feature-card"><span className="content-label">速记方法</span><h2>一句话记住结构</h2><p>{study.mnemonic}</p></article><article className="study-feature-card study-feature-wide"><span className="content-label">卦辞</span><h2>{study.judgment}</h2><p>{study.judgmentInterpretation}</p></article><article className="study-feature-card study-feature-wide"><span className="content-label">彖传</span><h2>《彖》曰</h2><p className="canonical-passage">{study.tuan}</p><p>{study.tuanInterpretation}</p></article><article className="study-feature-card study-feature-wide"><span className="content-label">象传</span><h2>《象》曰</h2><p className="canonical-passage">{study.xiang}</p><p>{study.xiangInterpretation}</p></article></section>
       <section className="text-layer hexagram-lines-section"><div className="text-layer-header"><div><p className="eyebrow">逐爻阅读</p><h2>爻辞与爻位解释</h2></div><span className="pending-badge">六爻</span></div><div className="line-text-list">{study.lines.map((line) => <article key={line.position}><div className="line-text-heading"><strong>{line.label}</strong><span>{hexagram.lines[line.position - 1] === 1 ? "阳爻" : "阴爻"}</span></div><p className="line-canonical">{line.canonical}</p><p className="line-interpretation">{line.interpretation}</p></article>)}</div></section>

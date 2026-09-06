@@ -883,26 +883,11 @@ test.describe("易境核心学习流程", () => {
     await expect(page.getByRole("link", { name: "打开内容 ↗" })).toHaveAttribute("href", "/hexagrams/1#line-1");
   });
 
-  test("快速自测完成后给出学习起点建议", async ({ page }) => {
+  test("快速自测入口跳转到统一测试学堂", async ({ page }) => {
     await page.goto("/self-test");
-    await expect(
-      page.getByRole("heading", { name: "先测自己的起点。" }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: "开始快速自测" }).click();
-    for (let index = 0; index < 5; index += 1) {
-      await expect(page.locator(".self-test-question")).toBeVisible();
-      await expect(page.getByRole("progressbar", { name: "快速自测进度" })).toHaveAttribute("aria-valuetext", `${index + 1} / 5`);
-      await expect(page.getByRole("progressbar", { name: "快速自测进度" })).toHaveAttribute("aria-valuenow", `${Math.round(((index + 1) / 5) * 100)}`);
-      await page.locator(".self-test-choices button").first().click();
-      if (index < 4) await page.getByRole("button", { name: "下一题" }).click();
-    }
-    await expect(
-      page.getByRole("heading", { name: "进入关系练习" }),
-    ).toBeVisible();
-    await expect(page.getByText("5 / 5 正确")).toBeVisible();
-    await expect(
-      page.getByText("不会直接修改掌握状态或复习队列"),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: "所有测试都在测试学堂。" })).toBeVisible();
+    await expect(page.locator(".self-test-question")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /进入测试学堂/ })).toHaveAttribute("href", "/test-academy");
   });
 
   test("实验室分享链接只恢复卦象参数", async ({ page }) => {
@@ -1834,11 +1819,8 @@ test.describe("易境核心学习流程", () => {
     await expect(page.locator(".content-block-source").first()).toContainText(
       "易境项目自编基础内容",
     );
-    await expect(page.locator(".instant-practice")).toBeVisible();
-    await expect(page.locator(".instant-choices button")).toHaveCount(3);
-    await page.locator(".instant-choices button").first().click();
-    await expect(page.getByText("回答正确")).toBeVisible();
-    await page.getByRole("button", { name: "下一题" }).click();
+    await expect(page.locator(".instant-practice")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /进入测试学堂/ })).toHaveAttribute("href", "/test-academy");
     const errata = page.locator(".content-errata");
     await errata.getByText("记录内容疑问或勘误", { exact: true }).click();
     await errata.getByLabel("描述").fill("记录一个待核对的术语来源。");
@@ -1854,113 +1836,12 @@ test.describe("易境核心学习流程", () => {
     await expect(page.getByText("已完成本节，待复习")).toBeVisible();
   });
 
-  test("八卦后天方位即时练习支持填写答案", async ({ page }) => {
-    await page.goto("/trigrams/qian");
-    const practice = page.locator(".instant-practice");
-    await expect(practice).toBeVisible();
-    await expect(practice.getByRole("progressbar", { name: "即时练习进度" })).toHaveAttribute("aria-valuenow", "0");
-    // The detail practice keeps five distinct memory paths in a stable order:
-    // name, three-line name, line arrangement, direction input, nature.
-    await practice.locator(".instant-choices button").first().click();
-    await expect(practice.getByText("回答正确")).toBeVisible();
-    await practice.getByRole("button", { name: "下一题" }).click();
-    await practice.locator(".instant-choices button").first().click();
-    await expect(practice.getByText("回答正确")).toBeVisible();
-    await practice.getByRole("button", { name: "下一题" }).click();
-    await practice.getByRole("button", { name: "阳爻" }).click();
-    await practice.getByRole("button", { name: "阳爻" }).click();
-    await practice.getByRole("button", { name: "阳爻" }).click();
-    await practice.getByRole("button", { name: "检查排列" }).click();
-    await expect(practice.getByText("回答正确")).toBeVisible();
-    await practice.getByRole("button", { name: "下一题" }).click();
-    await expect(practice.getByLabel("你的答案")).toBeVisible();
-    await practice.getByLabel("你的答案").fill("西北");
-    await practice.getByRole("button", { name: "提交答案" }).click();
-    await expect(practice.getByText("回答正确")).toBeVisible();
-  });
-
-  test("即时练习完成后可以回到今日页继续闭环", async ({ page }) => {
-    // A hexagram detail currently has one immediate exercise, so this
-    // scenario reaches the finished state without coupling the assertion to
-    // the number of five-element exercises.
-    await page.goto("/hexagrams/1");
-    const practice = page.locator(".instant-practice");
-    await expect(practice).toBeVisible();
-    await practice.locator(".instant-choices button").first().click();
-    await expect(practice.getByText("回答正确")).toBeVisible();
-    await practice.getByRole("button", { name: "查看练习总结" }).click();
-    await expect(practice.getByRole("heading", { name: "把刚才的答案留在记忆里。" })).toBeVisible();
-    await expect(practice.getByRole("link", { name: "回到今日" })).toHaveAttribute("href", "/");
-  });
-
-  test("八卦、五行和六十四卦详情的即时练习统一写入复习记录", async ({ page }) => {
-    // Each Playwright test receives an isolated browser context, so the
-    // review tables start empty. Avoid opening a competing raw IndexedDB
-    // connection here: WebKit can keep a page-owned connection alive while a
-    // test navigates, which makes an otherwise unnecessary clear transaction
-    // intermittently block.
-    const countImmediateAttempts = async () => page.evaluate(async () => {
-      return await new Promise<number>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const get = db.transaction("reviewAttempts", "readonly").objectStore("reviewAttempts").getAll();
-          get.onsuccess = () => {
-            const count = get.result.filter((attempt: { reviewMode?: string }) => attempt.reviewMode === "immediate").length;
-            db.close();
-            resolve(count);
-          };
-          get.onerror = () => reject(get.error);
-        };
-      });
-    });
-    let expectedImmediateCount = 0;
-    for (const path of ["/trigrams/qian", "/tools/five-elements", "/hexagrams/1"]) {
+  test("学习内容只保留统一测试入口", async ({ page }) => {
+    for (const path of ["/trigrams/qian", "/tools/five-elements", "/hexagrams/1", "/learn/trigrams"]) {
       await page.goto(path);
-      const practice = page.locator(".instant-practice");
-      await expect(practice).toBeVisible();
-      await practice.locator(".instant-choices button").first().click();
-      await expect(practice.getByText("回答正确")).toBeVisible();
-      if (path === "/trigrams/qian") {
-        await practice.getByLabel("用自己的话复述（可选）").fill("我用三条阳爻记住乾卦。");
-      }
-      await practice.getByRole("button", { name: /下一题|查看练习总结/ }).click();
-      expectedImmediateCount += 1;
-      // The next button awaits the Dexie transaction, but wait for the
-      // browser-visible store as well before the next navigation. This makes
-      // the cross-route persistence assertion deterministic under production
-      // worker contention.
-      await expect.poll(countImmediateAttempts, { timeout: 5_000 }).toBe(expectedImmediateCount);
+      await expect(page.locator(".instant-practice")).toHaveCount(0);
+      await expect(page.getByRole("link", { name: /测试学堂/ }).first()).toHaveAttribute("href", "/test-academy");
     }
-    const attempts = await page.evaluate(async () => {
-      return await new Promise<Array<{ targetType: string; reviewMode: string; responseTimeMs?: number; selfExplanation?: string }>>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const get = db.transaction("reviewAttempts", "readonly").objectStore("reviewAttempts").getAll();
-          get.onsuccess = () => { db.close(); resolve(get.result); };
-          get.onerror = () => reject(get.error);
-        };
-      });
-    });
-    expect(attempts.filter((attempt) => attempt.reviewMode === "immediate").map((attempt) => attempt.targetType).sort()).toEqual(["five-element", "hexagram", "trigram"]);
-    expect(attempts.some((attempt) => attempt.reviewMode === "immediate" && attempt.selfExplanation === "我用三条阳爻记住乾卦。")).toBe(true);
-    expect(attempts.filter((attempt) => attempt.reviewMode === "immediate").every((attempt) => Number.isInteger(attempt.responseTimeMs) && (attempt.responseTimeMs ?? -1) >= 0 && (attempt.responseTimeMs ?? Infinity) <= 86_400_000)).toBe(true);
-    const conceptProgress = await page.evaluate(async () => {
-      return await new Promise<unknown[]>((resolve, reject) => {
-        const request = indexedDB.open("yijing-local");
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => {
-          const db = request.result;
-          const get = db.transaction("conceptProgress", "readonly").objectStore("conceptProgress").getAll();
-          get.onsuccess = () => { db.close(); resolve(get.result); };
-          get.onerror = () => reject(get.error);
-        };
-      });
-    });
-    expect(conceptProgress).toHaveLength(0);
   });
 
   test("重复打开已掌握课程不会降低掌握度", async ({ page }) => {
@@ -2075,7 +1956,8 @@ test.describe("易境核心学习流程", () => {
     await expect(
       page.getByRole("link", { name: /下一节：十二地支基础/ }),
     ).toHaveAttribute("href", "/learn/earthly-branches");
-    await expect(page.locator(".instant-practice")).toBeVisible();
+    await expect(page.locator(".instant-practice")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /进入测试学堂/ })).toHaveAttribute("href", "/test-academy");
     await expect(
       page
         .getByRole("region", { name: "相关知识" })
@@ -2096,7 +1978,8 @@ test.describe("易境核心学习流程", () => {
     await expect(
       page.getByRole("link", { name: /打开河图洛书九宫工具/ }),
     ).toBeVisible();
-    await expect(page.locator(".instant-practice")).toBeVisible();
+    await expect(page.locator(".instant-practice")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: /进入测试学堂/ })).toHaveAttribute("href", "/test-academy");
     await expect(page.getByRole("heading", { name: "相关知识" })).toBeVisible();
   });
 
@@ -2105,7 +1988,7 @@ test.describe("易境核心学习流程", () => {
     await expect(
       page.getByRole("heading", { name: "把关系放到眼前。" }),
     ).toBeVisible();
-    await expect(page.locator(".tools-hub-card")).toHaveCount(6);
+    await expect(page.locator(".tools-hub-card")).toHaveCount(7);
     await page.goto("/tools/sexagenary-relations");
     await expect(
       page.getByRole("heading", { name: "先记配对，再谈规则。" }),
@@ -2351,21 +2234,12 @@ test.describe("易境核心学习流程", () => {
       "true",
     );
     await page.keyboard.press("End");
-    await expect(page.getByRole("tab", { name: "方位测验" })).toBeFocused();
-    await expect(page.getByRole("tab", { name: "方位测验" })).toHaveAttribute(
+    await expect(page.getByRole("tab", { name: "隐藏标签" })).toBeFocused();
+    await expect(page.getByRole("tab", { name: "隐藏标签" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
-    await page.getByRole("tab", { name: "方位测验" }).click();
-    await expect(page.getByRole("tabpanel")).toHaveAttribute(
-      "aria-labelledby",
-      "compass-mode-quiz",
-    );
-    await expect(page.getByText(/题目角度 135\.0°/)).toBeVisible();
-    await page.getByRole("button", { name: "东南" }).click();
-    await expect(page.getByText("回答正确。", { exact: false })).toBeVisible();
-    await expect(page.locator(".quiz-correct")).toHaveAttribute("role", "status");
-    await expect(page.locator(".quiz-correct")).toHaveAttribute("aria-live", "polite");
+    await expect(page.getByRole("tab", { name: "方位测验" })).toHaveCount(0);
     await expect(page.getByText(/不读取设备传感器/)).toBeVisible();
   });
 
@@ -2418,7 +2292,7 @@ test.describe("易境核心学习流程", () => {
     const startButton = page.getByRole("button", { name: /正在请求方向权限/ });
     await expect(startButton).toBeVisible();
     await expect(startButton).toBeDisabled();
-    await page.getByRole("tab", { name: "方位测验" }).click();
+    await page.getByRole("tab", { name: "隐藏标签" }).click();
     await page.evaluate(() => {
       (window as Window & { __resolveDirectionPermission?: (value: string) => void }).__resolveDirectionPermission?.("granted");
       const event = new Event("deviceorientation");

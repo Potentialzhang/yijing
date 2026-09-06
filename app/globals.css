@@ -7802,3 +7802,274 @@ html[data-theme="dark"] :is(input, select, textarea, button, a, summary):focus-v
     width: 15px;
   }
 }
+
+/* Dense tool and reading layouts. Interactive tools show their data here;
+   all question-based practice lives in the unified Test Academy. */
+.tools-page .tools-hub-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 28px;
+}
+.tools-page .tools-hub-card {
+  min-height: 154px;
+  padding: 17px;
+  gap: 6px;
+}
+.tools-page .tools-hub-card h2 {
+  font-size: 21px;
+  line-height: 1.25;
+}
+.tools-page .tools-hub-card p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tools-test-link {
+  width: fit-content;
+  margin-top: 14px;
+}
+.tool-page .subpage-lead {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.tool-page .pending-content {
+  margin-top: 18px;
+  padding: 18px;
+}
+.tool-page .pending-content h2 {
+  font-size: 21px;
+}
+.tool-page .pending-content p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.test-academy-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.test-academy-link > span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.test-academy-link .outline-button {
+  flex-shrink: 0;
+}
+.home-academy-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+}
+.home-academy-entry > span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.hexagrams-page .subpage-header > .outline-button {
+  margin-top: 14px;
+}
+.hexagrams-page .hexagram-toolbar {
+  margin-top: 24px;
+}
+.hexagrams-page .hexagram-toolbar label {
+  flex: 1 1 320px;
+}
+.hexagrams-page .hexagram-toolbar input {
+  width: 100%;
+  max-width: 430px;
+}
+.hexagram-detail-page .test-academy-link {
+  margin-top: 12px;
+}
+
+@media (max-width: 760px) {
+  .tools-page,
+  .hexagrams-page,
+  .hexagram-detail-page {
+    padding: 24px 12px 46px;
+  }
+  .tools-page .back-link,
+  .hexagrams-page .back-link,
+  .hexagram-detail-page .back-link {
+    margin-bottom: 22px;
+  }
+  .tools-page .subpage-header h1,
+  .hexagrams-page .subpage-header h1,
+  .hexagram-detail-page .subpage-header h1 {
+    font-size: clamp(30px, 8vw, 42px);
+  }
+  .tools-page .subpage-lead,
+  .hexagrams-page .subpage-lead,
+  .hexagram-detail-page .subpage-lead {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .tools-page .tools-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .tools-page .tools-hub-card {
+    min-height: 128px;
+    padding: 13px 11px;
+    gap: 5px;
+  }
+  .tools-page .tools-hub-card > span {
+    font-size: 9px;
+  }
+  .tools-page .tools-hub-card h2 {
+    font-size: 18px;
+  }
+  .tools-page .tools-hub-card p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .tools-page .tools-hub-card strong {
+    font-size: 10px;
+  }
+  .tool-page .pending-content {
+    padding: 14px;
+  }
+  .tool-page .pending-content h2 {
+    font-size: 19px;
+  }
+  .tool-page .pending-content p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .test-academy-link {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 9px 10px;
+  }
+  .test-academy-link .outline-button {
+    width: 100%;
+    justify-content: center;
+  }
+  .home-academy-entry {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+    padding: 12px;
+  }
+  .home-academy-entry .outline-button {
+    width: 100%;
+    justify-content: center;
+  }
+  .hexagrams-page .hexagram-toolbar {
+    align-items: stretch;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .hexagrams-page .hexagram-toolbar label {
+    flex-basis: 100%;
+  }
+  .hexagrams-page .hexagram-toolbar input {
+    max-width: none;
+  }
+  .hexagrams-page .hexagram-index {
+    margin-top: 12px;
+  }
+  .hexagram-detail-page .detail-hero {
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .hexagram-detail-page .detail-visual,
+  .hexagram-detail-page .detail-copy {
+    padding: 16px;
+    border-radius: 11px;
+  }
+  .hexagram-detail-page .detail-visual {
+    min-height: 200px;
+  }
+  .hexagram-detail-page .detail-visual .hexagram-glyph {
+    width: 92px;
+  }
+  .hexagram-detail-page .detail-visual .line-button,
+  .hexagram-detail-page .detail-visual .line-glyph {
+    width: 82px;
+  }
+  .hexagram-detail-page .detail-visual .line-part {
+    height: 7px;
+  }
+  .hexagram-detail-page .detail-copy h2 {
+    font-size: 22px;
+  }
+  .hexagram-detail-page .detail-copy > p {
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .hexagram-detail-page .structure-table {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .hexagram-detail-page .structure-table div {
+    padding: 8px;
+  }
+  .hexagram-detail-page .hexagram-study-sections {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .hexagram-detail-page .study-feature-wide {
+    grid-column: 1 / -1;
+  }
+  .hexagram-detail-page .study-feature-card {
+    padding: 13px;
+  }
+  .hexagram-detail-page .study-feature-card h2 {
+    font-size: 18px;
+  }
+  .hexagram-detail-page .study-feature-card p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .hexagram-detail-page .study-feature-card .canonical-passage {
+    padding: 9px 10px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .hexagram-detail-page .hexagram-lines-section {
+    margin-top: 16px;
+  }
+  .hexagram-detail-page .line-text-list article {
+    padding: 11px;
+  }
+  .hexagram-detail-page .line-text-list .line-canonical {
+    font-size: 14px;
+  }
+  .hexagram-detail-page .line-text-list .line-interpretation {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 430px) {
+  .tools-page .tools-hub-card h2 {
+    font-size: 16px;
+  }
+  .tools-page .tools-hub-card {
+    min-height: 118px;
+  }
+  .hexagram-detail-page .hexagram-study-sections {
+    grid-template-columns: 1fr;
+  }
+  .hexagram-detail-page .study-feature-wide {
+    grid-column: auto;
+  }
+}

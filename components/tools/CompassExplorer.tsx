@@ -20,10 +20,10 @@ import { CompassRecords } from "@/components/tools/CompassRecords";
 import { CompassCorrection } from "@/components/tools/CompassCorrection";
 import type { CompassRecord } from "@/db/schema";
 import { applyCompassCorrection } from "@/core/compass/correction";
-import { MOUNTAINS, mountainAt, mountainBearing } from "@/content/mountains";
+import { mountainAt, mountainBearing } from "@/content/mountains";
 import { MountainDial } from "@/components/tools/MountainDial";
 
-type CompassMode = "explore" | "hide-labels" | "quiz";
+type CompassMode = "explore" | "hide-labels";
 
 function readDegrees(value: string): number {
   const parsed = Number(value);
@@ -54,9 +54,7 @@ export function CompassExplorer() {
   const correctionRef = useRef(0);
   const [correctionDegrees, setCorrectionDegrees] = useState(0);
   const manualDegreesRef = useRef(degrees);
-  const [quizDegrees, setQuizDegrees] = useState(135);
-  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
-  const activeDegrees = mode === "quiz" ? quizDegrees : degrees;
+  const activeDegrees = degrees;
   const direction = useMemo(
     () => compassDirectionAt(activeDegrees),
     [activeDegrees],
@@ -68,16 +66,13 @@ export function CompassExplorer() {
   const mountain = mountainAt(activeDegrees);
   const bearing = mountainBearing(activeDegrees);
   const target = isMountains ? { id: mountain.id, label: mountain.name + "山", centerDegrees: mountain.centerDegrees, rangeLabel: `${mountain.startDegrees}°–${mountain.endDegrees}°`, mnemonic: `地盘正针 · 正五行属${mountain.element}。以当前角度为朝向：坐${bearing.sitting.name}向${bearing.facing.name}。` } : direction;
-  const quizOptions = isMountains ? MOUNTAINS.map(item => ({ id: item.id, label: item.name })) : COMPASS_DIRECTIONS;
   const modes: readonly { id: CompassMode; label: string }[] = [
     { id: "explore", label: "自由探索" },
     { id: "hide-labels", label: "隐藏标签" },
-    { id: "quiz", label: "方位测验" },
   ];
   function changeMode(next: CompassMode) {
-    if (next === "quiz") stopSensor();
+    if (sensorStartingRef.current && next !== mode) stopSensor();
     setMode(next);
-    setQuizAnswer(null);
   }
 
   useEffect(() => {
@@ -88,11 +83,6 @@ export function CompassExplorer() {
       `.compass-explorer .relation-mode button[data-mode="${target}"]`,
     )?.focus();
   }, [mode]);
-  function nextQuiz() {
-    setQuizDegrees((value) => normalizeDegrees(value + 67.5));
-    setQuizAnswer(null);
-  }
-
   function moveMode(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     const nextIndex = event.key === "Home"
       ? 0
@@ -112,7 +102,6 @@ export function CompassExplorer() {
     stopSensor();
     setDegrees(normalizeDegrees(record.degrees));
     setMode("explore");
-    setQuizAnswer(null);
   }
 
   function detectSensorCapability() {
@@ -332,7 +321,7 @@ export function CompassExplorer() {
               className={layer.id === layerId ? "selected" : ""}
               aria-pressed={layer.id === layerId}
               disabled={!layer.enabled}
-              onClick={() => { setLayerId(layer.id); setQuizAnswer(null); }}
+              onClick={() => setLayerId(layer.id)}
             >
               {layer.label}
               {!layer.enabled && <small>待确认</small>}
@@ -456,95 +445,45 @@ export function CompassExplorer() {
           offsetDegrees={correctionDegrees}
           onOffsetChange={changeCorrection}
         />
-        {mode !== "quiz" ? (
-          <>
-            <label htmlFor="compass-degrees">
-              手动输入角度（0°=北，顺时针）
-              <input
-                id="compass-degrees"
-                type="number"
-                min="0"
-                max="359.9"
-                step="0.1"
-                value={degrees.toFixed(1)}
-                onChange={(event) => {
-                  stopSensor();
-                  setDegrees(readDegrees(event.target.value));
-                }}
-              />
-            </label>
-            <label htmlFor="compass-slider">
-              拖动角度
-              <input
-                id="compass-slider"
-                type="range"
-                min="0"
-                max="359.9"
-                step="0.1"
-                value={degrees}
-                onChange={(event) => {
-                  stopSensor();
-                  setDegrees(readDegrees(event.target.value));
-                }}
-              />
-            </label>
-            <p>
-              当前角度 <strong>{formatted}°</strong> · {activeLayer.label}：
-              <strong>{target.label}</strong>
-            </p>
-          </>
-        ) : (
-          <div className="compass-quiz">
-            <p>
-              题目角度 <strong>{formatted}°</strong>：请选择它所在的{isMountains ? "山向" : "八方"}。
-            </p>
-            <div className="compass-quiz-options">
-              {quizOptions.map((item) => (
-                <button
-                  type="button"
-                  key={item.id}
-                  className={
-                    quizAnswer === item.id
-                      ? item.id === target.id
-                        ? "correct"
-                        : "incorrect"
-                      : ""
-                  }
-                  onClick={() => setQuizAnswer(item.id)}
-                  disabled={quizAnswer !== null}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-            {quizAnswer && (
-              <p
-                className={
-                  quizAnswer === target.id ? "quiz-correct" : "quiz-wrong"
-                }
-                role="status"
-                aria-live="polite"
-                aria-atomic="true"
-              >
-                {quizAnswer === target.id
-                  ? "回答正确。"
-                  : `答案是${target.label}。`}
-                <button
-                  type="button"
-                  className="text-button"
-                  onClick={nextQuiz}
-                >
-                  换一道题
-                </button>
-              </p>
-            )}
-          </div>
-        )}
+        <label htmlFor="compass-degrees">
+          手动输入角度（0°=北，顺时针）
+          <input
+            id="compass-degrees"
+            type="number"
+            min="0"
+            max="359.9"
+            step="0.1"
+            value={degrees.toFixed(1)}
+            onChange={(event) => {
+              stopSensor();
+              setDegrees(readDegrees(event.target.value));
+            }}
+          />
+        </label>
+        <label htmlFor="compass-slider">
+          拖动角度
+          <input
+            id="compass-slider"
+            type="range"
+            min="0"
+            max="359.9"
+            step="0.1"
+            value={degrees}
+            onChange={(event) => {
+              stopSensor();
+              setDegrees(readDegrees(event.target.value));
+            }}
+          />
+        </label>
+        <p>
+          当前角度 <strong>{formatted}°</strong> · {activeLayer.label}：
+          <strong>{target.label}</strong>
+        </p>
       </div>
       <div className="compass-stage">
-        {isMountains ? <MountainDial degrees={activeDegrees} hideLabels={mode === "hide-labels"} showAnswer={mode !== "quiz" || quizAnswer !== null} onSelect={value => {
-          if (mode === "quiz") { if (quizAnswer === null) setQuizAnswer(mountainAt(value).id); }
-          else { stopSensor(); setDegrees(value); }
+        {isMountains ? <MountainDial degrees={activeDegrees} hideLabels={mode === "hide-labels"} showAnswer onSelect={value => {
+          stopSensor();
+          setDegrees(value);
         }} /> : <>
         <div className="compass-marker" aria-hidden="true">
           ▲
@@ -557,8 +496,8 @@ export function CompassExplorer() {
         >
           {COMPASS_DIRECTIONS.map((item) => (
             <button type="button" key={item.id} className={`compass-label compass-${item.id} ${target.id === item.id ? "is-current" : ""}`} aria-pressed={target.id === item.id} onClick={() => {
-              if (mode === "quiz") { if (quizAnswer === null) setQuizAnswer(item.id); }
-              else { stopSensor(); setDegrees(item.centerDegrees); }
+              stopSensor();
+              setDegrees(item.centerDegrees);
             }}>
               {mode === "hide-labels" ? (
                 <span aria-hidden="true">•</span>
@@ -588,21 +527,17 @@ export function CompassExplorer() {
           {activeLayer.label}
         </span>
         <h2>
-          {mode === "quiz" && !quizAnswer
-            ? `题目 · ${formatted}°`
-            : `${target.label} · ${formatted}°`}
+          {target.label} · {formatted}°
         </h2>
         <p>
-          {mode === "quiz" && !quizAnswer
-            ? "先在盘面上判断，再选择答案。"
-            : target.mnemonic}
+          {target.mnemonic}
         </p>
         <div className="compass-facts">
           <span>
-            中心角<strong>{mode === "quiz" && !quizAnswer ? "答题后显示" : `${target.centerDegrees}°`}</strong>
+            中心角<strong>{target.centerDegrees}°</strong>
           </span>
           <span>
-            学习范围<strong>{mode === "quiz" && !quizAnswer ? "答题后显示" : target.rangeLabel}</strong>
+            学习范围<strong>{target.rangeLabel}</strong>
           </span>
         </div>
         <small>

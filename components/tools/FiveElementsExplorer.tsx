@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { FIVE_ELEMENTS } from "@/content/five-elements";
-import { InstantPractice } from "@/components/learning/InstantPractice";
 
 type ElementId = (typeof FIVE_ELEMENTS)[number]["id"];
 
@@ -66,7 +65,6 @@ export function FiveElementsExplorer() {
           )}
         </div>
       </div>
-      <InstantPractice key={selected.id} targetType="five-element" targetId={selected.id} />
     </section>
   );
 }

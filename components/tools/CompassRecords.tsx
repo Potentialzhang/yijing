@@ -118,7 +118,7 @@ export function CompassRecords({
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            placeholder="例如：书桌朝向练习"
+            placeholder="例如：书桌朝向记录"
           />
         </label>
         <label>

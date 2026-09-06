@@ -3,7 +3,6 @@ import { FavoriteButton } from "@/components/notes/FavoriteButton";
 import { NoteEntry } from "@/components/notes/NoteEntry";
 import { ContentErrata } from "@/components/content/ContentErrata";
 import { PrerequisiteNotice } from "@/components/learning/PrerequisiteNotice";
-import { InstantPractice } from "@/components/learning/InstantPractice";
 import { LessonProgress } from "@/components/learning/LessonProgress";
 import type { EarthlyBranch, HeavenlyStem } from "@/content/sexagenary";
 import { SOURCE_REGISTRY } from "@/content/sources";
@@ -76,7 +75,7 @@ export function CycleStudyPage({ conceptId, title, lead, intro, items, relatedCo
         <div>{relatedConcepts.length ? relatedConcepts.map((item) => <Link href={`/learn/${item.id}`} key={item.id}>{item.title} ↗</Link>) : <p>暂无已登记的相关知识。</p>}</div>
       </section>
 
-      <InstantPractice targetType="concept" targetId={conceptId} />
+      <div className="test-academy-link" aria-label="统一测试入口"><span>需要答题时，进入统一题库。</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
       <ContentErrata targetType="concept" targetId={conceptId} contentVersion={1} />
       <NoteEntry targetType="concept" targetId={conceptId} label="打开本节个人笔记" />
     </main>

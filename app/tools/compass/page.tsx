@@ -3,7 +3,7 @@ import { CompassExplorer } from "@/components/tools/CompassExplorer";
 
 export default function CompassPage() {
   return (
-    <main className="subpage">
+    <main className="subpage tool-page">
       <header className="subpage-header">
         <Link href="/tools" className="back-link">
           ← 工具
@@ -12,10 +12,11 @@ export default function CompassPage() {
         <h1>先把角度读清楚。</h1>
         <p className="subpage-lead">
           用手动角度理解
-          360°、八方与二十四山。切换地盘正针后可点击盘面定位、查看坐向和正五行，或隐藏标签练习。设备方向读取仍为可选辅助。
+          360°、八方与二十四山。切换地盘正针后可点击盘面定位、查看坐向和正五行，或隐藏标签观察。设备方向读取仍为可选辅助。
         </p>
       </header>
       <CompassExplorer />
+      <div className="test-academy-link" aria-label="统一测试入口"><span>需要检验方位记忆？</span><Link className="outline-button" href="/test-academy">进入测试学堂 <span>↗</span></Link></div>
       <section className="pending-content">
         <span className="content-label">学习边界</span>
         <h2>角度是输入，方位是映射</h2>
